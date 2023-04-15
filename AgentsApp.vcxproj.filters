@@ -48,6 +48,9 @@
     <ClCompile Include="Application.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="Rae.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -75,6 +78,9 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
+      <Filter>Pliki źródłowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Rae.h">
       <Filter>Pliki źródłowe</Filter>
     </ClInclude>
   </ItemGroup>
