@@ -1,11 +1,34 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <string_view>
+
 
 
 
 namespace Rae 
 {
+	class Cycle {
+		std::unique_ptr<int> round;
+	};
+
+	class Agent {
+	public:
+		std::string_view nickname;
+	};
+
+	class SupplierRandomizer {
+	private:
+		std::unique_ptr<int> mMin;
+		std::unique_ptr<int> mMax;
+	public:
+		SupplierRandomizer();
+		SupplierRandomizer(int min, int max);
+		std::vector<int> getEvenDistributeRandom();
+		std::vector<int> getAllNumbersFromRangeOnce();
+		
+	};
+
 	class Reputation {
 		private:
 			std::unique_ptr<int> mProvidedServices;
@@ -47,4 +70,5 @@ namespace Rae
 			void setRequestedServices(int requested) { mRequestedServices = std::make_unique<int>(requested); }
 
 	};
+	
 }
