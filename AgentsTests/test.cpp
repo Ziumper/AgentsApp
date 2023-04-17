@@ -17,39 +17,30 @@ TEST(ReputationTests, CanHandleBiggerNumbers) {
 	EXPECT_EQ(reputation.getSuplierBehaviour(), 100);
 }
 
-//TEST(SupplierRandomizerTests, IsReturningEvenDistribute) {
-//	auto randomizer = 
-//
-//	auto randomInts = randomizer.getEvenDistributeRandom();
-//
-//	//count each of the even distribute;
-//
-//	EXPECT_EQ(0, 100);
-//}
 
-TEST(SupplierRandomizerTests, CanGetAllNumbersFromRangeOneToSix) {
+TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
+	auto start = 50;
+	auto end = 150;
+	auto randomizer = Rae::SupplierRandomizer(start,end);
+	
+	//mean in even distribute is always equal to (a+b)/2
+	double evenDistributeMean =  (end+start)/2;
+	double variance = sqrt((end - start) * (end - start) / 12);
+	double rangeBoundUp = evenDistributeMean + variance;
+	double rangeBoundDown = evenDistributeMean - variance;
 
-	auto loopEnd = 6;
-	auto randomizer = Rae::SupplierRandomizer(1, loopEnd);
-
-	auto randomInts = randomizer.getAllNumbersFromRangeOnce();
-
-	//count each 
-	auto counterMap = std::map<int, int>();
+	auto randomInts = randomizer.getEvenDistribute(1000);
 	auto sum = 0;
 
-	for (int i = 1; i <= loopEnd; i++) {
-		counterMap[i] = 0;
-
-		for (auto& num : randomInts)
-		{
-			if (i == num) {
-				counterMap[i] += 1;
-			}
-		}
-
-		sum += counterMap[i];
+	for (auto& num : randomInts)
+	{
+		sum += num;
 	}
 
-	EXPECT_EQ(sum, 6);
+	int length = randomInts.capacity();
+	double calculatedMean = (sum / length);
+
+	//if calcul
+	EXPECT_LT(calculatedMean, rangeBoundUp);
+	EXPECT_GT(calculatedMean, rangeBoundDown);
 }

@@ -1,36 +1,53 @@
 #include "Rae.h"
 #include <vector>
+#include <random>
 
 namespace Rae {
 
-	std::vector<int> SupplierRandomizer::getEvenDistributeRandom()
+	/// <summary>
+	/// Returns the array with numbers evenly distributed
+	/// </summary>
+	/// <returns></returns>
+	std::vector<int> SupplierRandomizer::getEvenDistribute()
 	{
-		return std::vector<int>();
-	}
-
-	std::vector<int> SupplierRandomizer::getAllNumbersFromRangeOnce()
-	{
-		auto numbers = std::vector<int>();
-
 		int end = *mMax.get();
 		int start = *mMin.get();
 
-		for (int i = start; i <= end; i++) {
-			numbers.push_back(i);
+		return getEvenDistribute(end - start);
+	}
+
+	std::vector<int> SupplierRandomizer::getEvenDistribute(int amount)
+	{
+		std::vector<int> randomNumbers = std::vector<int>();
+
+		for (int i = 0; i < amount; i++) {
+			int randomNumber = this->getEvenRandomNumber();
+			randomNumbers.push_back(randomNumber);
 		}
 
-		return numbers;
+		return randomNumbers;
 	}
+
+	int SupplierRandomizer::getEvenRandomNumber()
+	{
+		int randomNumber = distributor(generator);
+		return randomNumber;
+	}
+
 
 	SupplierRandomizer::SupplierRandomizer(int min, int max):
 		mMax(std::make_unique<int>(max)),
 		mMin(std::make_unique<int>(min))
-	{};
+	{
+		/// https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
+		std::random_device random;  // Will be used to obtain a seed for the random number engine
+		std::mt19937 generator(random()); // Standard mersenne_twister_engine seeded with rd()
+		std::uniform_int_distribution<> distributor(*mMin.get(), *mMax.get());
 
-	SupplierRandomizer::SupplierRandomizer():
-		mMax(std::make_unique<int>(150)),
-		mMin(std::make_unique<int>(50))
-	{};
+		this->generator = generator;
+		this->distributor = distributor;
+	};
+
 
 
 		

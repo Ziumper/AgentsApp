@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 #include <string_view>
-
+#include <random>
 
 
 
@@ -21,12 +21,13 @@ namespace Rae
 	private:
 		std::unique_ptr<int> mMin;
 		std::unique_ptr<int> mMax;
+		std::uniform_int_distribution<> distributor;
+		std::mt19937 generator;
 	public:
-		SupplierRandomizer();
 		SupplierRandomizer(int min, int max);
-		std::vector<int> getEvenDistributeRandom();
-		std::vector<int> getAllNumbersFromRangeOnce();
-		
+		std::vector<int> getEvenDistribute();
+		std::vector<int> getEvenDistribute(int amount);
+		int getEvenRandomNumber();
 	};
 
 	class Reputation {
