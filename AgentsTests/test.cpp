@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "../Rae.h"
 
-
-
 TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
 	auto start = 50;
 	auto end = 150;

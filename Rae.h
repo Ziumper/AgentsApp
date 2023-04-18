@@ -22,6 +22,8 @@ namespace Rae
 	};
 
 	class Rtbs {
+	private: 
+		RaeLogger *logger;
 	public:
 		std::unique_ptr<int> cycles{ std::make_unique<int>(3) };
 		std::unique_ptr<int> agentsAmount{ std::make_unique<int>(1000) };
@@ -32,8 +34,8 @@ namespace Rae
 		std::unique_ptr<double> expoG{ std::make_unique<double>(0.5) };
 		std::unique_ptr<double> beginTrustMesaure{ std::make_unique<double>(1) };
 		GoodWill goodWill{ GoodWill() };
-		Rtbs() {}
-		void StartMonteCarlo(RaeLogger *logger);
+		Rtbs(RaeLogger *logger): logger(logger) {}
+		void StartMonteCarlo();
 	};
 
 	class Cycle {

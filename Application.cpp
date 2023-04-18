@@ -158,7 +158,7 @@ namespace AgentsApp
 
 	void ShowRbtsmWindow()
 	{
-		static Rae::Rtbs rtbsm;
+		static Rae::Rtbs rtbsm(&logger);
 		ImGui::Begin("RTBS System");
 		ImGui::SeparatorText("Inputs");
 
@@ -180,7 +180,7 @@ namespace AgentsApp
 		ImGui::SeparatorText("Actions");
 		bool clicked = ImGui::Button("Start");
 		if (clicked) {
-			rtbsm.StartMonteCarlo(&logger);
+			rtbsm.StartMonteCarlo();
 		}
 
 		ImGui::End();

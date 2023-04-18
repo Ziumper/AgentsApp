@@ -45,7 +45,7 @@ namespace Rae {
 		this->distributor = distributor;
 	};
 
-	void Rtbs::StartMonteCarlo(RaeLogger* logger)
+	void Rtbs::StartMonteCarlo()
 	{
 		logger->AddLog("Starting Monte Carlo simulation!");
 
