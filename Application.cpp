@@ -2,6 +2,9 @@
 
 #include "imgui.h"
 #include "Rae.h"
+#include <string>
+#include <stdio.h>
+#include <time.h>
 
 namespace AgentsApp
 {
@@ -19,7 +22,7 @@ namespace AgentsApp
 		LineOffsets.clear();
 		LineOffsets.push_back(0);
 	}
-	void AgentsAppLog::AddLog(const char* fmt, ...) 
+	void AgentsAppLog::AddLogEntry(const char* fmt, ...) 
 	{
 		int old_size = Buf.size();
 		va_list args;
@@ -30,6 +33,23 @@ namespace AgentsApp
 			if (Buf[old_size] == '\n')
 				LineOffsets.push_back(old_size + 1);
 	}
+	void AgentsAppLog::AddLog(std::string logEntry) {
+		time_t     now = time(0);
+		struct tm  tstruct;
+		char       buf[80];
+		localtime_s(&tstruct,&now);
+		// Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+		// for more information about date/time format
+		strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+		std::string entry = buf;
+		entry.append(" ");
+		entry.append(logEntry);
+		entry.append("\n");
+		
+		AddLogEntry(entry.c_str());
+	}
+
+
 	void AgentsAppLog::Draw(const char* title, bool* p_open)
 	{
 		if (!ImGui::Begin(title, p_open))
@@ -124,23 +144,24 @@ namespace AgentsApp
 	{
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-		static AgentsAppLog my_log;
+		static AgentsAppLog logger;
 		//my_log.AddLog("Hello %d world\n", 123);
-		my_log.Draw("Log Window");
+		logger.Draw("Log Window");
 
-		ShowRbtsmWindow();
+		ShowRbtsmWindow(&logger);
 
 		ImGui::Begin("ViewPort");
 		ImGui::End();
 
-		//ImGui::ShowDemoWindow();
+		ImGui::ShowDemoWindow();
 	}
-	void ShowRbtsmWindow()
+	void ShowRbtsmWindow(AgentsAppLog *log)
 	{
 		static Rae::Rtbs rtbsm;
 		ImGui::Begin("RTBS System");
 		ImGui::SeparatorText("Inputs");
 
+		ImGui::InputInt("Cycles", rtbsm.cycles.get());
 		ImGui::InputInt("Agents", rtbsm.agentsAmount.get());
 		ImGui::InputInt("s-Agents", rtbsm.strategicAgentsAmount.get());
 
@@ -156,8 +177,12 @@ namespace AgentsApp
 		ImGui::InputDouble("V_0 trust", rtbsm.beginTrustMesaure.get());
 
 		ImGui::SeparatorText("Actions");
+		bool clicked = ImGui::Button("Start");
+		if (clicked) {
+			log->AddLog("It's working");
+		}
 
-		ImGui::Button("Start");
+
 		ImGui::End();
 	}
 }

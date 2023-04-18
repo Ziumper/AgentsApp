@@ -16,6 +16,7 @@ namespace Rae
 
 	class Rtbs {
 	public:
+		std::unique_ptr<int> cycles{ std::make_unique<int>(3) };
 		std::unique_ptr<int> agentsAmount{ std::make_unique<int>(1000) };
 		std::unique_ptr<int> strategicAgentsAmount{ std::make_unique<int>(50) };
 		std::unique_ptr<int> kMin{ std::make_unique<int>(50) };
