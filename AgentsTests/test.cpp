@@ -21,7 +21,7 @@ TEST(ReputationTests, CanHandleBiggerNumbers) {
 TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
 	auto start = 50;
 	auto end = 150;
-	auto randomizer = Rae::SupplierRandomizer(start,end);
+	auto randomizer = Rae::Randomizer(start,end);
 	
 	//mean in even distribute is always equal to (a+b)/2
 	double evenDistributeMean =  (end+start)/2;

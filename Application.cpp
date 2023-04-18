@@ -5,14 +5,14 @@
 
 namespace AgentsApp
 {
-    struct ExampleAppLog
+    struct AgentsAppLog
     {
         ImGuiTextBuffer     Buf;
         ImGuiTextFilter     Filter;
         ImVector<int>       LineOffsets; // Index to lines offset. We maintain this with AddLog() calls.
         bool                AutoScroll;  // Keep scrolling if already at the bottom.
 
-        ExampleAppLog()
+        AgentsAppLog()
         {
             AutoScroll = true;
             Clear();
@@ -130,49 +130,47 @@ namespace AgentsApp
 
 	void RenderUI()
 	{
-        static int agents = 1000;
-        static int sAgents = 50;
-        static int kMin = 50;
-        static int kMax = 150;
-        static float expoA = 0.5;
-        static float expoG = 0.5;
-        static float goodWillX = 0;
-        static float goodWillY = 0;
-        static float goodWillZ = 0;
-        static int measureOfTrust = 1;
+        
 
         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-        static ExampleAppLog my_log;
+        static AgentsAppLog my_log;
         //my_log.AddLog("Hello %d world\n", 123);
         my_log.Draw("Log Window");
-
-		ImGui::Begin("RTBS System");
-        ImGui::SeparatorText("Inputs");
-       
-        ImGui::InputInt("Agents", &agents);
-        ImGui::InputInt("s-Agents", &sAgents);
         
-        ImGui::InputInt("kMin", &kMin);
-        ImGui::InputInt("kMax", &kMax);
-        ImGui::InputFloat("expoA", &expoA);
-        ImGui::InputFloat("expoG", &expoG);
-        ImGui::SeparatorText("Good Will");
-        ImGui::InputFloat("x", &goodWillX);
-        ImGui::InputFloat("y", &goodWillY);
-        ImGui::InputFloat("z", &goodWillZ);
-        ImGui::InputInt("V_0 trust", &measureOfTrust);
-
-        ImGui::SeparatorText("Actions");
-
-		ImGui::Button("Start");
-		ImGui::End();
-
+        ShowRbtsmWindow();
+		
         ImGui::Begin("ViewPort");
         ImGui::End();
 
         //ImGui::ShowDemoWindow();
 	}
+
+    void ShowRbtsmWindow()
+    {
+        static Rae::Rtbs rtbsm;
+        ImGui::Begin("RTBS System");
+        ImGui::SeparatorText("Inputs");
+
+        ImGui::InputInt("Agents", rtbsm.agentsAmount.get());
+        ImGui::InputInt("s-Agents", rtbsm.strategicAgentsAmount.get());
+
+        ImGui::InputInt("kMin", rtbsm.kMin.get());
+        ImGui::InputInt("kMax", rtbsm.kMax.get());
+        ImGui::InputDouble("expoA", rtbsm.expoA.get());
+        ImGui::InputDouble("expoG", rtbsm.expoG.get());
+        ImGui::SeparatorText("Good Will");
+        ImGui::InputDouble("x", rtbsm.goodWill.x.get());
+        ImGui::InputDouble("y", rtbsm.goodWill.y.get());
+        ImGui::InputDouble("z", rtbsm.goodWill.z.get());
+        ImGui::SeparatorText("Starting trust measure");
+        ImGui::InputDouble("V_0 trust", rtbsm.beginTrustMesaure.get());
+
+        ImGui::SeparatorText("Actions");
+
+        ImGui::Button("Start");
+        ImGui::End();
+    }
 
   
 

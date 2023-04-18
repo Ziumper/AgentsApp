@@ -8,7 +8,7 @@ namespace Rae {
 	/// Returns the array with numbers evenly distributed
 	/// </summary>
 	/// <returns></returns>
-	std::vector<int> SupplierRandomizer::getEvenDistribute()
+	std::vector<int> Randomizer::getEvenDistribute()
 	{
 		int end = *mMax.get();
 		int start = *mMin.get();
@@ -16,7 +16,7 @@ namespace Rae {
 		return getEvenDistribute(end - start);
 	}
 
-	std::vector<int> SupplierRandomizer::getEvenDistribute(int amount)
+	std::vector<int> Randomizer::getEvenDistribute(int amount)
 	{
 		std::vector<int> randomNumbers = std::vector<int>();
 
@@ -28,14 +28,14 @@ namespace Rae {
 		return randomNumbers;
 	}
 
-	int SupplierRandomizer::getEvenRandomNumber()
+	int Randomizer::getEvenRandomNumber()
 	{
 		int randomNumber = distributor(generator);
 		return randomNumber;
 	}
 
 
-	SupplierRandomizer::SupplierRandomizer(int min, int max):
+	Randomizer::Randomizer(int min, int max):
 		mMax(std::make_unique<int>(max)),
 		mMin(std::make_unique<int>(min))
 	{
