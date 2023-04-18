@@ -48,8 +48,6 @@ namespace AgentsApp
 		
 		AddLogEntry(entry.c_str());
 	}
-
-
 	void AgentsAppLog::Draw(const char* title, bool* p_open)
 	{
 		if (!ImGui::Begin(title, p_open))
