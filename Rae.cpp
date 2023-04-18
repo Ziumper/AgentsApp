@@ -3,7 +3,6 @@
 #include <random>
 
 namespace Rae {
-
 	/// <summary>
 	/// Returns the array with numbers evenly distributed
 	/// </summary>
@@ -27,15 +26,13 @@ namespace Rae {
 
 		return randomNumbers;
 	}
-
 	int Randomizer::getEvenRandomNumber()
 	{
 		int randomNumber = distributor(generator);
 		return randomNumber;
 	}
 
-
-	Randomizer::Randomizer(int min, int max):
+	Randomizer::Randomizer(int min, int max) :
 		mMax(std::make_unique<int>(max)),
 		mMin(std::make_unique<int>(min))
 	{
@@ -48,10 +45,13 @@ namespace Rae {
 		this->distributor = distributor;
 	};
 
+	void Rtbs::StartMonteCarlo(RaeLogger* logger)
+	{
+		logger->AddLog("Starting Monte Carlo simulation!");
 
+		Randomizer randomizer = Randomizer(*kMin.get(), *kMax.get());
+		auto range = randomizer.getEvenRandomNumber();
 
-		
-	
-
+		logger->AddLog("Done");
+	}
 }
-

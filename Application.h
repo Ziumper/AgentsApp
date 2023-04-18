@@ -2,10 +2,11 @@
 #include <cstddef>
 #include "imgui.h"
 #include <string>
+#include "Rae.h"
 
 namespace AgentsApp
 {
-	class AgentsAppLog {
+	class AgentsAppLog : public Rae::RaeLogger {
 	private:
 		ImGuiTextBuffer     Buf;
 		ImGuiTextFilter     Filter;
@@ -14,11 +15,11 @@ namespace AgentsApp
 		void AddLogEntry(const char* fmt, ...);
 	public:
 		void Clear();
-		void AddLog(std::string logEntry);
+		void AddLog(std::string logEntry) override;
 		void Draw(const char* title, bool* p_open = NULL);
 		AgentsAppLog();
 	};
 
 	void RenderUI();
-	void ShowRbtsmWindow(AgentsAppLog *log);
+	void ShowRbtsmWindow();
 }

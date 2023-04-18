@@ -1,21 +1,6 @@
 #include "pch.h"
 #include "../Rae.h"
 
-TEST(ReputationTests, IsSupplierBehaviourAboveZero) {
-	auto reputation = Rae::Reputation();
-	reputation.setProvidedServices(2);
-	reputation.setRequestedServices(3);
-
-	EXPECT_EQ(reputation.getSuplierBehaviour(), 1);
-}
-
-TEST(ReputationTests, CanHandleBiggerNumbers) {
-	auto reputation = Rae::Reputation();
-	reputation.setProvidedServices(200);
-	reputation.setRequestedServices(300);
-
-	EXPECT_EQ(reputation.getSuplierBehaviour(), 100);
-}
 
 
 TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
