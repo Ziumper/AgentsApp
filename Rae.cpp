@@ -7,26 +7,26 @@ namespace Rae {
 	/// Returns the array with numbers evenly distributed
 	/// </summary>
 	/// <returns></returns>
-	std::vector<int> Randomizer::getEvenDistribute()
+	std::vector<int> Randomizer::GetEvenDistribute()
 	{
 		int end = *mMax.get();
 		int start = *mMin.get();
 
-		return getEvenDistribute(end - start);
+		return GetEvenDistribute(end - start);
 	}
 
-	std::vector<int> Randomizer::getEvenDistribute(int amount)
+	std::vector<int> Randomizer::GetEvenDistribute(int amount)
 	{
 		std::vector<int> randomNumbers = std::vector<int>();
 
 		for (int i = 0; i < amount; i++) {
-			int randomNumber = this->getEvenRandomNumber();
+			int randomNumber = this->GetEvenRandomNumber();
 			randomNumbers.push_back(randomNumber);
 		}
 
 		return randomNumbers;
 	}
-	int Randomizer::getEvenRandomNumber()
+	int Randomizer::GetEvenRandomNumber()
 	{
 		int randomNumber = distributor(generator);
 		return randomNumber;
@@ -49,8 +49,14 @@ namespace Rae {
 	{
 		logger->AddLog("Starting Monte Carlo simulation!");
 
+		for (int i = 0; i < *cycles; i++) {
+			logger->AddLog("Starting initialization of first cycle!");
+		}
+
 		Randomizer randomizer = Randomizer(*kMin.get(), *kMax.get());
-		auto range = randomizer.getEvenRandomNumber();
+		auto range = randomizer.GetEvenRandomNumber();
+
+		
 
 		logger->AddLog("Done");
 	}

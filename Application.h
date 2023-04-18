@@ -15,11 +15,11 @@ namespace AgentsApp
 		void AddLogEntry(const char* fmt, ...);
 	public:
 		void Clear();
-		void AddLog(std::string logEntry) override;
+		void AddLog(const char * logEntry) override;
 		void Draw(const char* title, bool* p_open = NULL);
 		AgentsAppLog();
 	};
 
 	void RenderUI();
-	void ShowRbtsmWindow();
+	void ShowRtbsmWindow();
 }

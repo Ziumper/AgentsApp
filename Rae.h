@@ -17,7 +17,7 @@ namespace Rae
 
 	class RaeLogger {
 	public:
-		virtual void AddLog(std::string entry) = 0;
+		virtual void AddLog(const char *entry) = 0;
 		virtual ~RaeLogger() {};
 	};
 
@@ -55,8 +55,8 @@ namespace Rae
 		std::mt19937 generator;
 	public:
 		Randomizer(int min, int max);
-		std::vector<int> getEvenDistribute();
-		std::vector<int> getEvenDistribute(int amount);
-		int getEvenRandomNumber();
+		std::vector<int> GetEvenDistribute();
+		std::vector<int> GetEvenDistribute(int amount);
+		int GetEvenRandomNumber();
 	};
 }

@@ -38,7 +38,7 @@ namespace AgentsApp
 				LineOffsets.push_back(old_size + 1);
 	}
 
-	void AgentsAppLog::AddLog(std::string logEntry) {
+	void AgentsAppLog::AddLog(const char* logEntry) {
 		time_t     now = time(0);
 		struct tm  tstruct;
 		char       buf[80];
@@ -148,7 +148,7 @@ namespace AgentsApp
 	{
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 		logger.Draw("Log Window");
-		ShowRbtsmWindow();
+		ShowRtbsmWindow();
 
 		ImGui::Begin("ViewPort");
 		ImGui::End();
@@ -156,7 +156,7 @@ namespace AgentsApp
 		ImGui::ShowDemoWindow();
 	}
 
-	void ShowRbtsmWindow()
+	void ShowRtbsmWindow()
 	{
 		static Rae::Rtbs rtbsm(&logger);
 		ImGui::Begin("RTBS System");

@@ -12,7 +12,7 @@ TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
 	double rangeBoundUp = evenDistributeMean + variance;
 	double rangeBoundDown = evenDistributeMean - variance;
 
-	auto randomInts = randomizer.getEvenDistribute(1000);
+	std::vector randomInts = randomizer.GetEvenDistribute(1000);
 	auto sum = 0;
 
 	for (auto& num : randomInts)
