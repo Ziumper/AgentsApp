@@ -15,7 +15,8 @@ namespace AgentsApp
 		void AddLogEntry(const char* fmt, ...);
 	public:
 		void Clear();
-		void AddLog(const char * logEntry) override;
+		void AddLog(const char* logEntry) override;
+		void AddLog(const char* logEntry,const int number) override;
 		void Draw(const char* title, bool* p_open = NULL);
 		AgentsAppLog();
 	};

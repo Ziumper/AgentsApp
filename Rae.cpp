@@ -50,14 +50,38 @@ namespace Rae {
 		logger->AddLog("Starting Monte Carlo simulation!");
 
 		for (int i = 0; i < *cycles; i++) {
-			logger->AddLog("Starting initialization of first cycle!");
+			RunCycle(i);
 		}
 
-		Randomizer randomizer = Randomizer(*kMin.get(), *kMax.get());
-		auto range = randomizer.GetEvenRandomNumber();
-
-		
-
 		logger->AddLog("Done");
+	}
+
+	void Rtbs::RunCycle(int cycleNumber)
+	{
+		logger->AddLog("Running cycle: ", cycleNumber);
+
+		logger->AddLog("Creating agents");
+		std::vector<Agent> listOfAgents;
+		
+		Agent *agent = new Agent();
+		agent->number = 7;
+		agent->trust = 20;
+
+		listOfAgents.push_back(*agent);
+
+		//listOfAgents->push_back(agent);
+		//for (int i = 0; i < *agentsAmount; i++) {
+		//	Agent agent;
+		//	agent.number = std::make_unique<int>(i);
+		//	
+		//	if (i == 0) {
+		//		//double beginnerTrust = *beginTrustMesaure;
+		//		//agent.trust = std::make_unique<double>(beginnerTrust);
+		//	}
+
+		//	listOfAgents->push_back(agent);
+		//}
+
+		logger->AddLog("Created agents: ", *agentsAmount);
 	}
 }

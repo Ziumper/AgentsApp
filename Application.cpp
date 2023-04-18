@@ -54,6 +54,14 @@ namespace AgentsApp
 		AddLogEntry(entry.c_str());
 	}
 
+	void AgentsAppLog::AddLog(const char* logEntry,const int number)
+	{
+		std::string entry = logEntry;
+		auto numberAsString = std::to_string(number);
+		entry.append(numberAsString);
+		AddLog(entry.c_str());
+	}
+
 	void AgentsAppLog::Draw(const char* title, bool* p_open)
 	{
 		if (!ImGui::Begin(title, p_open))

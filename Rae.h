@@ -18,6 +18,7 @@ namespace Rae
 	class RaeLogger {
 	public:
 		virtual void AddLog(const char *entry) = 0;
+		virtual void AddLog(const char* entry, const int number) = 0;
 		virtual ~RaeLogger() {};
 	};
 
@@ -36,6 +37,7 @@ namespace Rae
 		GoodWill goodWill{ GoodWill() };
 		Rtbs(RaeLogger *logger): logger(logger) {}
 		void StartMonteCarlo();
+		void RunCycle(int cycleNumber);
 	};
 
 	class Cycle {
@@ -44,7 +46,9 @@ namespace Rae
 
 	class Agent {
 	public:
-		std::string_view nickname;
+		int number;
+		double trust;
+		Agent() {};
 	};
 
 	class Randomizer {
