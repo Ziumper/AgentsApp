@@ -121,6 +121,11 @@ namespace Rae {
 			Agent agent = Agent();
 			agent.number = i;
 			agent.trust = beginTrustMesaure;
+			
+			if (i < strategicAgentsAmount) {
+				agent.isStrategicAgent = true;
+			}
+
 			agents.push_back(agent);
 		}
 
