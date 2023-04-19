@@ -158,10 +158,10 @@ namespace AgentsApp
 		logger.Draw("Log Window");
 		ShowRtbsmWindow();
 
-		ImGui::Begin("ViewPort");
-		ImGui::End();
+		//ImGui::Begin("ViewPort");
+		//ImGui::End();
 
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 	}
 
 	void ShowRtbsmWindow()

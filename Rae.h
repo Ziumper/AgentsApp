@@ -26,19 +26,23 @@ namespace Rae
 	public:
 		int number{ 0 };
 		double trust{ 0 };
+		bool wasRecipent{ false };
 		Agent() {};
 	};
 
 	class Cycle {
 	public:
 		std::vector<Agent> agents;
+		std::vector<Agent> suppilers;
+		Agent suppiler;
 		int round{ 0 };
-		Cycle(int roundNumber, int mAgents);
+		Cycle(int roundNumber) : round(roundNumber) {};
 	};
 
 	class MonteCarlo {
 	private:
 		void RunCycle(Cycle cycle);
+		void ChooseSuppilers(Cycle cycle);
 	public:
 		int cyclesAmount{ 3 };
 		int agentsAmount{ 1000 };
