@@ -45,6 +45,7 @@ namespace Rae
 	public:
 		virtual void AddLog(const char* entry) = 0;
 		virtual void AddLog(const char* entry, const int number) = 0;
+		virtual void AddLog(const char* entry, const double number) = 0;
 		virtual ~RaeLogger() {};
 	};
 
@@ -59,20 +60,28 @@ namespace Rae
 	};
 
 	class Cycle {
+		std::vector<Agent> mAgents;
+		Agent* mRecipientAgent{ 0 };
 	public:
-		std::vector<Agent> agents;
-		std::vector<Agent> suppilers;
-		Agent recipent;
 		int round{ 0 };
 		Cycle(int roundNumber) : round(roundNumber) {};
+		Cycle() : round(0) {};
+		bool IsDone();
+		void SetAgents(std::vector<Agent> agents) { mAgents = agents; };
+		std::vector<Agent> GetAgents() { return mAgents; }
+		void Start();
 	};
 
 	class MonteCarlo {
 	private:
-		void RunCycle(Cycle *cycle);
-		void ChooseSuppilers(Cycle *cycle);
-		std::vector<Agent> CreateAgents();
-		std::vector<Cycle> CreateCycles();
+		Cycle *mCurrentCycle;
+		std::vector<Agent> mAgents;
+		std::vector<Cycle> mCycles;
+		bool mIsRunning{ false };
+		//void ChooseSuppilers(Cycle *cycle);
+		void CreateAgents();
+		void CreateCycles();
+		void SwitchToNextCycle();
 		void SetServiceAvailiabilityForAgent(Agent* agent);
 		void SetServiceReceptionForAgent(Agent* agent);
 	public:
@@ -88,6 +97,7 @@ namespace Rae
 		GoodWill goodWill{ GoodWill() };
 		MonteCarlo(RaeLogger* logger) : logger(logger) {};
 		void Start();
+		void Update();
 	};
 
 	
