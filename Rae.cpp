@@ -34,19 +34,19 @@ namespace Rae {
 		this->distributor = distributor;
 	};
 
-	void MonteCarlo::RunCycle(Cycle cycle)
+	void MonteCarlo::RunCycle(Cycle *cycle)
 	{
-		logger->AddLog("Starting cycle: ", cycle.round);
+		logger->AddLog("Starting cycle: ", cycle->round);
 		ChooseSuppilers(cycle);
 	}
 
-	void MonteCarlo::ChooseSuppilers(Cycle cycle)
+	void MonteCarlo::ChooseSuppilers(Cycle *cycle)
 	{
 		//recipent would be the one from round
-		Agent recipent = cycle.agents[cycle.round];
-		recipent.wasRecipent = true;
+		Agent *recipent = &cycle->agents[cycle->round];
+		recipent->wasRecipent = true;
 
-		logger->AddLog("Choosing the suppliers agents for cycle: ", cycle.round);
+		logger->AddLog("Choosing the suppliers agents for cycle: ", cycle->round);
 		Randomizer randomizer = Randomizer(kMin, kMax);
 		int suppilersAmount = randomizer.GetEvenRandomNumber();
 
@@ -60,16 +60,16 @@ namespace Rae {
 		for (int& number : cycleAgentRecipentsNumbers) {
 
 			//special case handle when we got recipent inside suppiler / shouldn't happen so often
-			while (number == recipent.number) {
+			while (number == recipent->number) {
 				number = supplierRandomizer.GetEvenRandomNumber();
 			}
 
-			Agent supplier = cycle.agents[number];
+			Agent supplier = cycle->agents[number];
 			suppilers.push_back(supplier);
 		}
 
-		cycle.recipent = recipent;
-		cycle.suppilers = suppilers;
+		cycle->recipent = *recipent;
+		cycle->suppilers = suppilers;
 
 		logger->AddLog("Amount of recpients choosen: ", suppilersAmount);
 	}
@@ -96,9 +96,10 @@ namespace Rae {
 		logger->AddLog("Creating cycles: ", cyclesAmount);
 		for (int t = 0; t < cyclesAmount; t++) {
 			Cycle cycle = Cycle(t);
+			cycle.round = t;
 			//move saved agents to next cycle
 			cycle.agents = tempAgents;
-			RunCycle(cycle);
+			RunCycle(&cycle);
 			//move agents from previous cycle to temp
 			tempAgents = cycle.agents;
 			cycles.push_back(cycle);

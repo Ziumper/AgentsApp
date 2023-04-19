@@ -34,15 +34,15 @@ namespace Rae
 	public:
 		std::vector<Agent> agents;
 		std::vector<Agent> suppilers;
-		Agent suppiler;
+		Agent recipent;
 		int round{ 0 };
 		Cycle(int roundNumber) : round(roundNumber) {};
 	};
 
 	class MonteCarlo {
 	private:
-		void RunCycle(Cycle cycle);
-		void ChooseSuppilers(Cycle cycle);
+		void RunCycle(Cycle *cycle);
+		void ChooseSuppilers(Cycle *cycle);
 	public:
 		int cyclesAmount{ 3 };
 		int agentsAmount{ 1000 };
