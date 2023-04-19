@@ -166,29 +166,29 @@ namespace AgentsApp
 
 	void ShowRtbsmWindow()
 	{
-		static Rae::Rtbs rtbsm(&logger);
+		static Rae::MonteCarlo monteCarlo(&logger);
 		ImGui::Begin("RTBS System");
 		ImGui::SeparatorText("Inputs");
 
-		ImGui::InputInt("Cycles", rtbsm.cycles.get());
-		ImGui::InputInt("Agents", rtbsm.agentsAmount.get());
-		ImGui::InputInt("s-Agents", rtbsm.strategicAgentsAmount.get());
+		ImGui::InputInt("Cycles", &monteCarlo.cyclesAmount);
+		ImGui::InputInt("Agents", &monteCarlo.agentsAmount);
+		ImGui::InputInt("s-Agents", &monteCarlo.strategicAgentsAmount);
 
-		ImGui::InputInt("kMin", rtbsm.kMin.get());
-		ImGui::InputInt("kMax", rtbsm.kMax.get());
-		ImGui::InputDouble("expoA", rtbsm.expoA.get());
-		ImGui::InputDouble("expoG", rtbsm.expoG.get());
+		ImGui::InputInt("kMin", &monteCarlo.kMin);
+		ImGui::InputInt("kMax", &monteCarlo.kMax);
+		ImGui::InputDouble("expoA", &monteCarlo.expoA);
+		ImGui::InputDouble("expoG", &monteCarlo.expoG);
 		ImGui::SeparatorText("Good Will");
-		ImGui::InputDouble("x", rtbsm.goodWill.x.get());
-		ImGui::InputDouble("y", rtbsm.goodWill.y.get());
-		ImGui::InputDouble("z", rtbsm.goodWill.z.get());
+		ImGui::InputDouble("x", &monteCarlo.goodWill.x);
+		ImGui::InputDouble("y", &monteCarlo.goodWill.y);
+		ImGui::InputDouble("z", &monteCarlo.goodWill.z);
 		ImGui::SeparatorText("Starting trust measure");
-		ImGui::InputDouble("V_0 trust", rtbsm.beginTrustMesaure.get());
+		ImGui::InputDouble("V_0 trust", &monteCarlo.beginTrustMesaure);
 
 		ImGui::SeparatorText("Actions");
 		bool clicked = ImGui::Button("Start");
 		if (clicked) {
-			rtbsm.StartMonteCarlo();
+			monteCarlo.Start();
 		}
 
 		ImGui::End();

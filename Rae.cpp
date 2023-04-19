@@ -3,18 +3,7 @@
 #include <random>
 
 namespace Rae {
-	/// <summary>
-	/// Returns the array with numbers evenly distributed
-	/// </summary>
-	/// <returns></returns>
-	std::vector<int> Randomizer::GetEvenDistribute()
-	{
-		int end = *mMax.get();
-		int start = *mMin.get();
-
-		return GetEvenDistribute(end - start);
-	}
-
+	
 	std::vector<int> Randomizer::GetEvenDistribute(int amount)
 	{
 		std::vector<int> randomNumbers = std::vector<int>();
@@ -33,55 +22,63 @@ namespace Rae {
 	}
 
 	Randomizer::Randomizer(int min, int max) :
-		mMax(std::make_unique<int>(max)),
-		mMin(std::make_unique<int>(min))
+		mMax(max),
+		mMin(min)
 	{
 		/// https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
 		std::random_device random;  // Will be used to obtain a seed for the random number engine
 		std::mt19937 generator(random()); // Standard mersenne_twister_engine seeded with rd()
-		std::uniform_int_distribution<> distributor(*mMin.get(), *mMax.get());
+		std::uniform_int_distribution<> distributor(mMin, mMax);
 
 		this->generator = generator;
 		this->distributor = distributor;
 	};
 
-	void Rtbs::StartMonteCarlo()
+	void MonteCarlo::RunCycle(Cycle cycle)
 	{
-		logger->AddLog("Starting Monte Carlo simulation!");
+		logger->AddLog("Starting cycle ", cycle.round);
 
-		for (int i = 0; i < *cycles; i++) {
-			RunCycle(i);
+
+		Agent firstSupplier = cycle.agents[0];
+		firstSupplier.trust = beginTrustMesaure;
+
+		logger->AddLog("Initialized starting trust for first recipent agent: V_0:", beginTrustMesaure);
+
+		logger->AddLog("Choosing the recipents");
+		
+		Randomizer randomizer = Randomizer(kMin,kMax);
+
+		
+		
+	}
+
+	void MonteCarlo::Start()
+	{
+		logger->AddLog("Starting Monte Carlo simulation");
+
+		std::vector<Cycle> cycles;
+
+		for (int t = 0; t < cyclesAmount; t++) {
+			Cycle cycle = Cycle(t, agentsAmount);
+			logger->AddLog("Created cycle: ", cycle.round);
+			RunCycle(cycle);
+
+			
+			cycles.push_back(cycle);
 		}
 
-		logger->AddLog("Done");
+		logger->AddLog("Monte carlo simulation is done");
 	}
 
-	void Rtbs::RunCycle(int cycleNumber)
+	Cycle::Cycle(int roundNumber, int agentsAmount)
 	{
-		logger->AddLog("Running cycle: ", cycleNumber);
-
-		logger->AddLog("Creating agents");
-		std::vector<Agent> listOfAgents;
+		round = roundNumber;
 		
-		Agent *agent = new Agent();
-		agent->number = 7;
-		agent->trust = 20;
-
-		listOfAgents.push_back(*agent);
-
-		//listOfAgents->push_back(agent);
-		//for (int i = 0; i < *agentsAmount; i++) {
-		//	Agent agent;
-		//	agent.number = std::make_unique<int>(i);
-		//	
-		//	if (i == 0) {
-		//		//double beginnerTrust = *beginTrustMesaure;
-		//		//agent.trust = std::make_unique<double>(beginnerTrust);
-		//	}
-
-		//	listOfAgents->push_back(agent);
-		//}
-
-		logger->AddLog("Created agents: ", *agentsAmount);
+		for (int j = 0; j < agentsAmount; j++) {
+			Agent agent = Agent();
+			agent.number = j;
+			agents.push_back(agent);
+		}
 	}
+
 }
