@@ -85,11 +85,11 @@ namespace Rae {
 		int amountOfAgentsLeft = agentsAmount - 1;
 		Randomizer supplierRandomizer = Randomizer(0, amountOfAgentsLeft); //amount of agents to choose from
 
-		std::vector<int> cycleAgentRecipentsNumbers = supplierRandomizer.GetEvenDistribute(suppilersAmount); //distribute random from amount of agents to choose
+		std::vector<int> cycleAgentSuppilerNumbers = supplierRandomizer.GetEvenDistribute(suppilersAmount); //distribute random from amount of agents to choose
 
 		std::vector<Agent> suppilers;
 		int choosenRecipentsCounter = 0;
-		for (int& number : cycleAgentRecipentsNumbers) {
+		for (int& number : cycleAgentSuppilerNumbers) {
 
 			//special case handle when we got recipent inside suppiler / shouldn't happen so often
 			while (number == recipent->number) {
@@ -105,9 +105,40 @@ namespace Rae {
 		}
 
 		cycle->recipent = *recipent;
+		
+		//copy of current suppliers
 		cycle->suppilers = suppilers;
 
-		logger->AddLog("Amount of recpients choosen: ", suppilersAmount);
+		logger->AddLog("Amount of suppilers choosen: ", suppilersAmount);
+	}
+
+	std::vector<Agent> MonteCarlo::CreateAgents()
+	{
+		std::vector<Agent> agents;
+
+		logger->AddLog("Creating agents: ", agentsAmount);
+		for (int i = 0; i < agentsAmount; i++) {
+			Agent agent = Agent();
+			agent.number = i;
+			agent.trust = beginTrustMesaure;
+			agents.push_back(agent);
+		}
+
+		return agents;
+	}
+
+	std::vector<Cycle> MonteCarlo::CreateCycles()
+	{
+		std::vector<Cycle> cycles;
+
+		logger->AddLog("Creating cycles: ", cyclesAmount);
+		for (int t = 0; t < cyclesAmount; t++) {
+			Cycle cycle = Cycle(t);
+			cycle.round = t;
+			cycles.push_back(cycle);
+		}
+		
+		return cycles;
 	}
 
 	void MonteCarlo::SetServiceAvailiabilityForAgent(Agent* agent)
@@ -135,30 +166,17 @@ namespace Rae {
 	{
 		logger->AddLog("Starting Monte Carlo simulation");
 
-		std::vector<Cycle> cycles;
-		std::vector<Agent> agents;
-
-		logger->AddLog("Creating agents: ",agentsAmount);
-		for (int i = 0; i < agentsAmount; i++) {
-			Agent agent = Agent();
-			agent.number = i;
-			agent.trust = beginTrustMesaure;
-			agents.push_back(agent);
-		}
-
+		std::vector<Cycle> cycles = this->CreateCycles();
+		
 		//preserve agents to next cycle
-		std::vector<Agent> tempAgents = agents;
+		std::vector<Agent> tempAgents = this->CreateAgents();
 
-		logger->AddLog("Creating cycles: ", cyclesAmount);
-		for (int t = 0; t < cyclesAmount; t++) {
-			Cycle cycle = Cycle(t);
-			cycle.round = t;
+		for (Cycle& cycle : cycles) {
 			//move saved agents to next cycle
 			cycle.agents = tempAgents;
 			RunCycle(&cycle);
 			//move agents from previous cycle to temp
 			tempAgents = cycle.agents;
-			cycles.push_back(cycle);
 		}
 
 		logger->AddLog("Monte carlo simulation is done");

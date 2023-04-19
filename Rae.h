@@ -52,8 +52,9 @@ namespace Rae
 	public:
 		int number{ 0 };
 		double trust{ 0 };
-		double serviceAvailiability;
-		double serviceReception;
+		double serviceAvailiability{ 0 };
+		double serviceReception{ 0 };
+		bool isStrategicAgent{ false };
 		bool wasRecipent{ false };
 	};
 
@@ -70,6 +71,8 @@ namespace Rae
 	private:
 		void RunCycle(Cycle *cycle);
 		void ChooseSuppilers(Cycle *cycle);
+		std::vector<Agent> CreateAgents();
+		std::vector<Cycle> CreateCycles();
 		void SetServiceAvailiabilityForAgent(Agent* agent);
 		void SetServiceReceptionForAgent(Agent* agent);
 	public:
