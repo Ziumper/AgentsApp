@@ -14,7 +14,7 @@ namespace Rae {
 		}
 
 		return randomNumbers;
-	}
+	}	 
 	int Randomizer::GetEvenRandomNumber()
 	{
 		int randomNumber = distributor(generator);
@@ -33,6 +33,38 @@ namespace Rae {
 		this->generator = generator;
 		this->distributor = distributor;
 	};
+
+	RealRandomizer::RealRandomizer(double mMin, double mMax)
+	{
+		this->mMax = mMax;
+		this->mMin = mMin;
+
+		std::random_device random;  // Will be used to obtain a seed for the random number engine
+		std::mt19937 generator(random()); // Standard mersenne_twister_engine seeded with rd()
+		std::uniform_real_distribution<> distributor(mMin, mMax);
+
+		this->generator = generator;
+		this->distributor = distributor;
+	}
+
+	std::vector<double> RealRandomizer::GetEventDistribute(double amount)
+	{
+		std::vector<double> randomNumbers;
+
+		for (int i = 0; i < amount; i++) {
+			int randomNumber = this->GetEvenRandomNumber();
+			randomNumbers.push_back(randomNumber);
+		}
+
+		return randomNumbers;
+	}
+
+	double RealRandomizer::GetEvenRandomNumber()
+	{
+		double randomNumber = distributor(generator);
+		return randomNumber;
+	}
+
 
 	void MonteCarlo::RunCycle(Cycle *cycle)
 	{
@@ -65,6 +97,10 @@ namespace Rae {
 			}
 
 			Agent supplier = cycle->agents[number];
+	
+			SetServiceAvailiabilityForAgent(&supplier);
+			SetServiceReceptionForAgent(&supplier);
+			
 			suppilers.push_back(supplier);
 		}
 
@@ -72,6 +108,26 @@ namespace Rae {
 		cycle->suppilers = suppilers;
 
 		logger->AddLog("Amount of recpients choosen: ", suppilersAmount);
+	}
+
+	void MonteCarlo::SetServiceAvailiabilityForAgent(Agent* agent)
+	{
+		RealRandomizer agentServiceRandomizer = RealRandomizer(0, 1);
+		
+		double serviceA = agentServiceRandomizer.GetEvenRandomNumber();
+		double availiability = std::pow(serviceA, expoG);
+
+		agent->serviceAvailiability = availiability;
+	}
+
+	void MonteCarlo::SetServiceReceptionForAgent(Agent* agent)
+	{
+		RealRandomizer agentServiceRandomizer = RealRandomizer(0, 1);
+
+		double serviceA = agentServiceRandomizer.GetEvenRandomNumber();
+		double reception = std::pow(serviceA, expoA);
+
+		agent->serviceReception = reception;
 	}
 
 	
@@ -108,4 +164,5 @@ namespace Rae {
 		logger->AddLog("Monte carlo simulation is done");
 	}
 
+	
 }

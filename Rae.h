@@ -7,6 +7,32 @@
 
 namespace Rae
 {
+
+	class Randomizer {
+	private:
+		int mMin;
+		int mMax;
+		std::uniform_int_distribution<> distributor;
+		std::mt19937 generator;
+	public:
+		Randomizer(int min, int max);
+		std::vector<int> GetEvenDistribute(int amount);
+		int GetEvenRandomNumber();
+	};
+
+	class RealRandomizer {
+	private:
+		double mMin;
+		double mMax;
+		std::uniform_real_distribution<> distributor;
+		std::mt19937 generator;
+	public:
+		RealRandomizer(double mMin, double mMax);
+		std::vector<double> GetEventDistribute(double amount);
+		double GetEvenRandomNumber();
+	};
+
+
 	class GoodWill {
 	public:
 		double x{ 0 };
@@ -26,8 +52,9 @@ namespace Rae
 	public:
 		int number{ 0 };
 		double trust{ 0 };
+		double serviceAvailiability;
+		double serviceReception;
 		bool wasRecipent{ false };
-		Agent() {};
 	};
 
 	class Cycle {
@@ -43,6 +70,8 @@ namespace Rae
 	private:
 		void RunCycle(Cycle *cycle);
 		void ChooseSuppilers(Cycle *cycle);
+		void SetServiceAvailiabilityForAgent(Agent* agent);
+		void SetServiceReceptionForAgent(Agent* agent);
 	public:
 		int cyclesAmount{ 3 };
 		int agentsAmount{ 1000 };
@@ -58,15 +87,5 @@ namespace Rae
 		void Start();
 	};
 
-	class Randomizer {
-	private:
-		int mMin;
-		int mMax;
-		std::uniform_int_distribution<> distributor;
-		std::mt19937 generator;
-	public:
-		Randomizer(int min, int max);
-		std::vector<int> GetEvenDistribute(int amount);
-		int GetEvenRandomNumber();
-	};
+	
 }
