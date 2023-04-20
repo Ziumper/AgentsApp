@@ -28,6 +28,10 @@ namespace AgentsApp
 
 	void AgentsAppLog::AddLogEntry(const char* fmt, ...)
 	{
+		if (Enabled == false) {
+			return;
+		}
+
 		int old_size = Buf.size();
 		va_list args;
 		va_start(args, fmt);
@@ -193,9 +197,13 @@ namespace AgentsApp
 		ImGui::SeparatorText("Starting trust measure");
 		ImGui::InputDouble("V_0 trust", &monteCarlo.beginTrustMesaure);
 
-		ImGui::SeparatorText("Actions");
-		ImGui::Checkbox("Boost Mode", &monteCarlo.boostMode);
 
+		
+		ImGui::SeparatorText("Options");
+		ImGui::Checkbox("Boost Mode", &monteCarlo.boostMode);
+		ImGui::Checkbox("Loggin On/Off", &logger.Enabled);
+
+		ImGui::SeparatorText("Actions");
 		bool clicked = ImGui::Button("Start");
 		if (clicked) {
 			monteCarlo.Start();

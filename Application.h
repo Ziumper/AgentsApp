@@ -14,6 +14,7 @@ namespace AgentsApp
 		bool                AutoScroll;  // Keep scrolling if already at the bottom.
 		void AddLogEntry(const char* fmt, ...);
 	public:
+		bool Enabled{ true };
 		void Clear();
 		void AddLog(const char* logEntry) override;
 		void AddLog(const char* logEntry,const int number) override;
