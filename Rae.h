@@ -55,10 +55,10 @@ namespace Rae
 		double serviceReception{ 0 };
 		bool isStrategicAgent{ false };
 		bool wasRecipient{ false };
-		int suppilersAmount{ 0 };
-		std::vector<int> suppilersNumbers;
+		int suppliersAmount{ 0 };
+		std::vector<int> suppliersNumbers;
 		void ResetForNextCycle() {
-			suppilersAmount = 0; 
+			suppliersAmount = 0; 
 			serviceReception = 0;
 			serviceAvailiability = 0;
 		}
@@ -107,11 +107,11 @@ namespace Rae
 	private:
 		Cycle mCurrentCycle;
 		Agent mCurrentRecipient;
-		Agent mCurrentSuppiler;
+		Agent mCurrentSupplier;
 		int mInteractionIndex{ 0 };
 		std::vector<Agent> mAgents;
 		std::vector<Cycle> mCycles;
-		std::vector<Agent> mSuppilers;
+		std::vector<Agent> mSuppliers;
 		bool mIsRunning{ false };
 		bool mIsInitalizing{ false };
 		void SetServiceAvailiabilityForAgent(Agent* agent);
@@ -122,7 +122,7 @@ namespace Rae
 		void LogInteraction();
 		void MoveToNextInteraction();
 		void MoveToNextCycle();
-		int SetSuppilersAmountForRecipient();
+		int SetSuppliersAmountForRecipient();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
 	public:

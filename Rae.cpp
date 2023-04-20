@@ -73,8 +73,8 @@ namespace Rae {
 		this->wasRecipient = agent.wasRecipient;
 		this->serviceAvailiability = agent.serviceAvailiability;
 		this->serviceReception = agent.serviceReception;
-		this->suppilersNumbers = agent.suppilersNumbers;
-		this->suppilersAmount = agent.suppilersAmount;
+		this->suppliersNumbers = agent.suppliersNumbers;
+		this->suppliersAmount = agent.suppliersAmount;
 	}
 
 	Agent AgentsFactory::Create()
@@ -136,21 +136,21 @@ namespace Rae {
 	void MonteCarlo::Run()
 	{
 		//here procceding with agents for current cycle recipient
-		bool shouldSetSuppilerForCurrentRecipient = mCurrentRecipient.suppilersAmount == 0;
+		bool shouldSetSuppilerForCurrentRecipient = mCurrentRecipient.suppliersAmount == 0;
 		if (shouldSetSuppilerForCurrentRecipient) {
-			SetSuppilersAmountForRecipient();
+			SetSuppliersAmountForRecipient();
 			return;
 		}
 
 		//here goes the interaction
-		bool shouldInteract = mSuppilers.size() < mCurrentRecipient.suppilersAmount;
+		bool shouldInteract = mSuppliers.size() < mCurrentRecipient.suppliersAmount;
 		if (shouldInteract) {
 			Interact();
 			return;
 		}
 
 		//do reporting switch to next one
-		bool shouldMoveToNextRecipient = mCurrentRecipient.suppilersAmount == mInteractionIndex && mCurrentRecipient.number < mAgents.size()-1;
+		bool shouldMoveToNextRecipient = mCurrentRecipient.suppliersAmount == mInteractionIndex && mCurrentRecipient.number < mAgents.size()-1;
 		if (shouldMoveToNextRecipient) {
 			
 			//preserve values of recipient
@@ -180,7 +180,7 @@ namespace Rae {
 	void MonteCarlo::Interact()
 	{
 		if (boostMode) {
-			for (; mInteractionIndex < mCurrentRecipient.suppilersNumbers.size();) {
+			for (; mInteractionIndex < mCurrentRecipient.suppliersNumbers.size();) {
 				MoveToNextInteraction();
 				LogInteraction();
 			}
@@ -201,7 +201,7 @@ namespace Rae {
 			.append(" ;Recipent: ")
 			.append(std::to_string(mCurrentRecipient.number))
 			.append(" is interacting with Suppiler agent number: ")
-			.append(std::to_string(mCurrentSuppiler.number));
+			.append(std::to_string(mCurrentSupplier.number));
 
 		logger->AddLog(interactMessage.c_str());
 
@@ -270,25 +270,25 @@ namespace Rae {
 		logger->AddLog("Reception value set: ", reception);
 	}
 
-	int MonteCarlo::SetSuppilersAmountForRecipient()
+	int MonteCarlo::SetSuppliersAmountForRecipient()
 	{
 		//reset suppilers
-		mSuppilers.clear();
+		mSuppliers.clear();
 		mInteractionIndex = 0;
 
 		Randomizer randomizer = Randomizer(kMin, kMax);
-		mCurrentRecipient.suppilersAmount = randomizer.GetEvenRandomNumber();
+		mCurrentRecipient.suppliersAmount = randomizer.GetEvenRandomNumber();
 		mCurrentRecipient.wasRecipient = true;
 
 		//preserve
 		mAgents[mCurrentRecipient.number].CopyValues(mCurrentRecipient);
 
 		//set suppilers
-		int suppilersIndexTopBoundary = mCurrentRecipient.suppilersAmount-1;
+		int suppilersIndexTopBoundary = mCurrentRecipient.suppliersAmount-1;
 		Randomizer suppilerRandomizer = Randomizer(0, suppilersIndexTopBoundary);
-		mCurrentRecipient.suppilersNumbers = suppilerRandomizer.GetEvenDistribute(mCurrentRecipient.suppilersAmount);
+		mCurrentRecipient.suppliersNumbers = suppilerRandomizer.GetEvenDistribute(mCurrentRecipient.suppliersAmount);
 
-		for (int& suppilerIndex : mCurrentRecipient.suppilersNumbers) {
+		for (int& suppilerIndex : mCurrentRecipient.suppliersNumbers) {
 			//special case handling
 			while (mCurrentRecipient.number == suppilerIndex) {
 				suppilerIndex = suppilerRandomizer.GetEvenRandomNumber();
@@ -299,28 +299,28 @@ namespace Rae {
 		message.append("Choosen the suppliers amount for recipient number : ");
 		message.append(std::to_string(mCurrentRecipient.number));
 		message.append(" with ");
-		message.append(std::to_string(mCurrentRecipient.suppilersAmount));
+		message.append(std::to_string(mCurrentRecipient.suppliersAmount));
 		message.append(" suppilers.").append("Cycle: ").append(std::to_string(mCurrentCycle.round));
 
 		logger->AddLog(message.c_str());
 
 		//set first suppiler for agent
 		mInteractionIndex = 0;
-		int suppilerNumber = mCurrentRecipient.suppilersNumbers[mInteractionIndex];
-		mCurrentSuppiler = mAgents[suppilerNumber];
+		int suppilerNumber = mCurrentRecipient.suppliersNumbers[mInteractionIndex];
+		mCurrentSupplier = mAgents[suppilerNumber];
 		
-		return mCurrentRecipient.suppilersAmount;
+		return mCurrentRecipient.suppliersAmount;
 	}
 
 	void MonteCarlo::MoveToNextInteraction() {
-		int suppilerNumber = mCurrentRecipient.suppilersNumbers[mInteractionIndex];
+		int suppilerNumber = mCurrentRecipient.suppliersNumbers[mInteractionIndex];
 
 		//preserve supplier
-		mAgents[mCurrentSuppiler.number].CopyValues(mCurrentSuppiler);
+		mAgents[mCurrentSupplier.number].CopyValues(mCurrentSupplier);
 
-		mCurrentSuppiler = mAgents[suppilerNumber];
+		mCurrentSupplier = mAgents[suppilerNumber];
 
-		mSuppilers.push_back(mCurrentSuppiler);
+		mSuppliers.push_back(mCurrentSupplier);
 		mInteractionIndex++;
 
 	}
