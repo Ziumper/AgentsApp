@@ -213,6 +213,15 @@ namespace Rae {
 		int agentsCount = (int)mAgents.size();
 		bool shouldCreateAgents = agentsCount < agentsAmount;
 		if (shouldCreateAgents) {
+			if (boostMode) {
+				for (; mAgents.size() < agentsAmount;) {
+					Agent agent = mAgentsFactory.Create(mAgents.size());
+					mAgents.push_back(agent);
+				}
+
+				return;
+			}
+
 			Agent agent = mAgentsFactory.Create(mAgents.size());
 			mAgents.push_back(agent);
 			return;
