@@ -198,7 +198,7 @@ namespace Rae {
 			.append(std::to_string(mInteractionIndex))
 			.append(" ;Cycle: ")
 			.append(std::to_string(mCurrentCycle.round))
-			.append(" ;Recipent: ")
+			.append(" ;recipient: ")
 			.append(std::to_string(mCurrentRecipient.number))
 			.append(" is interacting with Suppiler agent number: ")
 			.append(std::to_string(mCurrentSupplier.number));
