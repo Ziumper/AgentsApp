@@ -61,7 +61,7 @@ namespace Rae
 
 	class Cycle {
 		std::vector<Agent> mAgents;
-		Agent* mRecipientAgent{ 0 };
+		Agent mRecipientAgent{ 0 };
 	public:
 		int round{ 0 };
 		Cycle(int roundNumber) : round(roundNumber) {};
@@ -72,9 +72,44 @@ namespace Rae
 		void Start();
 	};
 
+	template<typename T>
+	class Factory {
+	protected:
+		int mCounter{ 0 };
+		int mAmount{ 0 };
+		std::vector<T> mObjects;
+	public:
+		Factory<T>(int amount) : mAmount(amount) {};
+		std::vector<T> GetObjects() { return mObjects; }
+		inline bool IsDone() {
+			return mCounter >= mAmount;
+		}
+		inline virtual void Create() = 0;
+	};
+
+	class AgentsFactory: Factory<Agent> {
+	private:
+		double mBeginingTrustLevel;
+		int mStrategicCount;
+	public:
+		AgentsFactory(int amount, double trustLevel,int strategic) : 
+			Factory<Agent>(amount), 
+			mBeginingTrustLevel(trustLevel),
+			mStrategicCount(strategic) {};
+		inline void Create() override;
+	};
+
+	class CycleFactory: Factory<Cycle> {
+	private:
+		std::vector<Agent> mAgents;
+	public:
+		CycleFactory(int amount, std::vector<Agent> agents) : Factory<Cycle>(amount), mAgents(agents) {};
+		inline void Create() override;
+	};
+
 	class MonteCarlo {
 	private:
-		Cycle *mCurrentCycle;
+		Cycle mCurrentCycle;
 		std::vector<Agent> mAgents;
 		std::vector<Cycle> mCycles;
 		bool mIsRunning{ false };
@@ -101,4 +136,11 @@ namespace Rae
 	};
 
 	
+	//TODO 
+	/*
+	* 1. Przerobiæ konstruktory 
+	* 2. Przekopiowaæ referencje do tablicy z mCurrentCycle do mCycles
+	* 3. To samo zrobiæ dla agentów - punkt 2 
+	* 4. Update dla agenta i losowanie pojedyñczego agenta 
+	*/
 }

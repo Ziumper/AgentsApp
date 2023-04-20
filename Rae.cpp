@@ -144,17 +144,17 @@ namespace Rae {
 	void MonteCarlo::SwitchToNextCycle()
 	{
 		//preserve agents as copy
-		mAgents = mCurrentCycle->GetAgents();
+		mAgents = mCurrentCycle.GetAgents();
 
 		//get next cycle 
-		int next = mCurrentCycle->round+1;
-		Cycle *nextCycle = &mCycles[next];
+		int next = mCurrentCycle.round+1;
+		Cycle nextCycle = mCycles[next];
 
 		//set agents for next cycle
-		nextCycle->SetAgents(mAgents);
+		nextCycle.SetAgents(mAgents);
 		mCurrentCycle = nextCycle;
 
-		nextCycle->Start();
+		nextCycle.Start();
 	}
 
 	void MonteCarlo::Start()
@@ -165,12 +165,12 @@ namespace Rae {
 		CreateCycles();
 
 		//first one
-		MonteCarlo::mCurrentCycle = &mCycles[0];
+		MonteCarlo::mCurrentCycle = mCycles[0];
 
 		logger->AddLog("Initialization is done!");
 		logger->AddLog("Starting Monte Carlo simulation");
 
-		mCurrentCycle->Start();
+		mCurrentCycle.Start();
 
 		MonteCarlo::mIsRunning = true;
 	}
@@ -178,8 +178,8 @@ namespace Rae {
 	void MonteCarlo::Update()
 	{
 		if (mIsRunning == false) return;
-		if (mCurrentCycle->IsDone()) {
-			logger->AddLog("Switching to next cycle", mCurrentCycle->round);
+		if (mCurrentCycle.IsDone()) {
+			logger->AddLog("Switching to next cycle", mCurrentCycle.round);
 			SwitchToNextCycle();
 		}
 		
@@ -188,7 +188,7 @@ namespace Rae {
 
 	bool Cycle::IsDone()
 	{
-		int currentAgentCount =	mRecipientAgent->number + 1;
+		int currentAgentCount =	mRecipientAgent.number + 1;
 		if (currentAgentCount == mAgents.size()) 
 			return true;
 		
@@ -199,9 +199,11 @@ namespace Rae {
 
 	void Cycle::Start()
 	{
-		mRecipientAgent = &mAgents[0]; //first;
+		mRecipientAgent = mAgents[0]; //first;
 	}
 
+	
+	
 	//void MonteCarlo::ChooseSuppilers(Cycle* cycle)
 	//{
 	//	for (Agent& recipent : cycle->agents) {
@@ -231,6 +233,31 @@ namespace Rae {
 	//			suppilers.push_back(supplier);
 	//		}
 	//
+
+	inline void AgentsFactory::Create()
+	{
+		Agent agent = Agent();
+		agent.number = mCounter;
+		agent.trust = mBeginingTrustLevel;
+
+		if (mCounter < mStrategicCount) {
+			agent.isStrategicAgent = true;
+		}
+				
+		mObjects.push_back(agent);
+		mCounter++;
+	}
+
+
+
+	inline void CycleFactory::Create()
+	{
+		Cycle cycle = Cycle(mCounter);
+		cycle.round = mCounter;
+		cycle.SetAgents(mAgents);
+		mObjects.push_back(cycle);
+		mCounter++;
+	}
 
 	//		logger->AddLog("Amount of suppilers choosen: ", suppilersAmount);
 	//	}
