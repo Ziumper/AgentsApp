@@ -140,6 +140,9 @@ namespace Rae
 		MonteCarlo(RaeLogger* logger);
 		void Start();
 		void Update();
+		int CurrentRecipientNumberInCycle() { return mCurrentRecipient.number+1; }
+		int CurrentCycleNumber() { return mCurrentCycle.round; }
+		bool IsWorking(){ return mIsRunning || mIsInitalizing; }
 	
 		//Agent GetSuppilerForRecipient();
 	};
