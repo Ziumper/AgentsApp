@@ -135,36 +135,11 @@ namespace Rae {
 
 	void MonteCarlo::Run()
 	{
-		//here procceding with agents for current cycle recipient
-		bool shouldSetSuppilerForCurrentRecipient = mCurrentRecipient.suppliersAmount == 0;
-		if (shouldSetSuppilerForCurrentRecipient) {
-			SetSuppliersAmountForRecipient();
+		if (mCurrentRecipient.number < mAgents.size() - 1) {
+			UpdateAgents();
 			return;
 		}
-
-		//here goes the interaction
-		bool shouldInteract = mSuppliers.size() < mCurrentRecipient.suppliersAmount;
-		if (shouldInteract) {
-			Interact();
-			return;
-		}
-
-		//do reporting switch to next one
-		bool shouldMoveToNextRecipient = mCurrentRecipient.suppliersAmount == mInteractionIndex && mCurrentRecipient.number < mAgents.size()-1;
-		if (shouldMoveToNextRecipient) {
-			
-			//preserve values of recipient
-			mAgents[mCurrentRecipient.number].CopyValues(mCurrentRecipient);
-
-			//TODO do report
-
-			//move to next one
-			int indexOfRecipient = mCurrentRecipient.number + 1;
-			mCurrentRecipient = mAgents[indexOfRecipient];
 		
-			return;
-		}
-
 		//here the current cycle is done let's check if it's last one
 		bool shouldSwitchToNextCycle = mCurrentCycle.round < cyclesAmount - 1;
 		if (shouldSwitchToNextCycle) {
@@ -354,6 +329,42 @@ namespace Rae {
 		}
 
 		mCurrentRecipient = mAgents[0];
+	}
+
+	void MonteCarlo::MoveToNextRecipient() {
+		//preserve values of recipient
+		mAgents[mCurrentRecipient.number].CopyValues(mCurrentRecipient);
+
+		//TODO do report
+
+		//move to next one
+		int indexOfRecipient = mCurrentRecipient.number + 1;
+		mCurrentRecipient = mAgents[indexOfRecipient];
+
+	}
+
+	void MonteCarlo::UpdateAgents()
+	{
+		//here procceding with agents for current cycle recipient
+		bool shouldSetSuppilerForCurrentRecipient = mCurrentRecipient.suppliersAmount == 0;
+		if (shouldSetSuppilerForCurrentRecipient) {
+			SetSuppliersAmountForRecipient();
+			return;
+		}
+
+		//here goes the interaction
+		bool shouldInteract = mSuppliers.size() < mCurrentRecipient.suppliersAmount;
+		if (shouldInteract) {
+			Interact();
+			return;
+		}
+
+		//do reporting switch to next one
+		bool shouldMoveToNextRecipient = mCurrentRecipient.suppliersAmount == mInteractionIndex && mCurrentRecipient.number < mAgents.size() - 1;
+		if (shouldMoveToNextRecipient) {
+			MoveToNextRecipient();
+			return;
+		}
 	}
 
 	MonteCarlo::MonteCarlo(RaeLogger* logger)

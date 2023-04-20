@@ -122,6 +122,8 @@ namespace Rae
 		void LogInteraction();
 		void MoveToNextInteraction();
 		void MoveToNextCycle();
+		void MoveToNextRecipient();
+		void UpdateAgents();
 		int SetSuppliersAmountForRecipient();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
