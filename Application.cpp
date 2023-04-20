@@ -194,6 +194,8 @@ namespace AgentsApp
 		ImGui::InputDouble("V_0 trust", &monteCarlo.beginTrustMesaure);
 
 		ImGui::SeparatorText("Actions");
+		ImGui::Checkbox("Boost Mode", &monteCarlo.boostMode);
+
 		bool clicked = ImGui::Button("Start");
 		if (clicked) {
 			monteCarlo.Start();

@@ -114,10 +114,14 @@ namespace Rae
 		std::vector<Agent> mSuppilers;
 		bool mIsRunning{ false };
 		bool mIsInitalizing{ false };
-		void SwitchToNextCycle();
 		void SetServiceAvailiabilityForAgent(Agent* agent);
 		void SetServiceReceptionForAgent(Agent* agent);
+		void Interact();
+		void Run();
+		void Initialize();
+		void LogInteraction();
 		void MoveToNextInteraction();
+		void MoveToNextCycle();
 		int SetSuppilersAmountForRecipient();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
@@ -130,13 +134,13 @@ namespace Rae
 		double expoA{ 0.5 };
 		double expoG{ 0.5 };
 		double beginTrustMesaure{ 1 };
+		bool boostMode{ false };
 		RaeLogger* logger;
 		GoodWill goodWill{ GoodWill() };
 		MonteCarlo(RaeLogger* logger);
 		void Start();
 		void Update();
-		void Run();
-		void Initialize();
+	
 		//Agent GetSuppilerForRecipient();
 	};
 

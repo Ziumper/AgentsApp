@@ -66,6 +66,17 @@ namespace Rae {
 		return randomNumber;
 	}
 
+	void Agent::CopyValues(Agent agent)
+	{
+		this->isStrategicAgent = agent.isStrategicAgent;
+		this->number = agent.number;
+		this->wasRecipient = agent.wasRecipient;
+		this->serviceAvailiability = agent.serviceAvailiability;
+		this->serviceReception = agent.serviceReception;
+		this->suppilersNumbers = agent.suppilersNumbers;
+		this->suppilersAmount = agent.suppilersAmount;
+	}
+
 	Agent AgentsFactory::Create()
 	{
 		Agent agent = Agent();
@@ -134,35 +145,66 @@ namespace Rae {
 		//here goes the interaction
 		bool shouldInteract = mSuppilers.size() < mCurrentRecipient.suppilersAmount;
 		if (shouldInteract) {
-			std::string interactMessage =" Interaction index: ";
-
-			interactMessage
-				.append(std::to_string(mInteractionIndex))
-				.append(" ;Cycle: ")
-				.append(std::to_string(mCurrentCycle.round))
-				.append(" ;Recipent: ")
-				.append(std::to_string(mCurrentRecipient.number))
-				.append(" is interacting with Suppiler agent number: ")
-				.append(std::to_string(mCurrentSuppiler.number));
-
-			logger->AddLog(interactMessage.c_str());
-
-			MoveToNextInteraction();
-
+			Interact();
 			return;
 		}
 
+		//do reporting switch to next one
+		bool shouldMoveToNextRecipient = mCurrentRecipient.suppilersAmount == mInteractionIndex && mCurrentRecipient.number < mAgents.size()-1;
+		if (shouldMoveToNextRecipient) {
+			
+			//preserve values of recipient
+			mAgents[mCurrentRecipient.number].CopyValues(mCurrentRecipient);
+
+			//TODO do report
+
+			//move to next one
+			int indexOfRecipient = mCurrentRecipient.number + 1;
+			mCurrentRecipient = mAgents[indexOfRecipient];
+		
+			return;
+		}
 
 		//here the current cycle is done let's check if it's last one
 		bool shouldSwitchToNextCycle = mCurrentCycle.round < cyclesAmount - 1;
 		if (shouldSwitchToNextCycle) {
-			SwitchToNextCycle();
+			MoveToNextCycle();
 			return;
 		}
 
 		//here we are done
 		mIsRunning = false;
 		logger->AddLog("Monte Carlo simulation is done");
+	}
+
+	void MonteCarlo::Interact()
+	{
+		if (boostMode) {
+			for (; mInteractionIndex < mCurrentRecipient.suppilersNumbers.size();) {
+				MoveToNextInteraction();
+				LogInteraction();
+			}
+
+			return;
+		}
+
+		LogInteraction();
+		MoveToNextInteraction();
+	}
+
+	void MonteCarlo::LogInteraction() {
+		std::string interactMessage = " Interaction index: ";
+		interactMessage
+			.append(std::to_string(mInteractionIndex))
+			.append(" ;Cycle: ")
+			.append(std::to_string(mCurrentCycle.round))
+			.append(" ;Recipent: ")
+			.append(std::to_string(mCurrentRecipient.number))
+			.append(" is interacting with Suppiler agent number: ")
+			.append(std::to_string(mCurrentSuppiler.number));
+
+		logger->AddLog(interactMessage.c_str());
+
 	}
 
 	void MonteCarlo::Initialize()
@@ -196,7 +238,6 @@ namespace Rae {
 
 		mIsRunning = true;
 	}
-
 
 	void MonteCarlo::SetServiceAvailiabilityForAgent(Agent* agent)
 	{
@@ -259,7 +300,7 @@ namespace Rae {
 		message.append(std::to_string(mCurrentRecipient.number));
 		message.append(" with ");
 		message.append(std::to_string(mCurrentRecipient.suppilersAmount));
-		message.append(" suppilers");
+		message.append(" suppilers.").append("Cycle: ").append(std::to_string(mCurrentCycle.round));
 
 		logger->AddLog(message.c_str());
 
@@ -273,13 +314,18 @@ namespace Rae {
 
 	void MonteCarlo::MoveToNextInteraction() {
 		int suppilerNumber = mCurrentRecipient.suppilersNumbers[mInteractionIndex];
+
+		//preserve supplier
+		mAgents[mCurrentSuppiler.number].CopyValues(mCurrentSuppiler);
+
 		mCurrentSuppiler = mAgents[suppilerNumber];
+
 		mSuppilers.push_back(mCurrentSuppiler);
 		mInteractionIndex++;
 
 	}
 
-	void MonteCarlo::SwitchToNextCycle()
+	void MonteCarlo::MoveToNextCycle()
 	{
 		logger->AddLog("Current cycle done: ", mCurrentCycle.round);
 		//preserve agents in done as copy
@@ -304,16 +350,6 @@ namespace Rae {
 	MonteCarlo::MonteCarlo(RaeLogger* logger)
 	{
 		this->logger = logger;
-	}
-
-	void Agent::CopyValues(Agent agent)
-	{
-		this->isStrategicAgent = agent.isStrategicAgent;
-		this->number = agent.number;
-		this->serviceAvailiability = agent.serviceAvailiability;
-		this->serviceReception = agent.serviceReception;
-		this->suppilersNumbers = agent.suppilersNumbers;
-		this->suppilersAmount = agent.suppilersAmount;
 	}
 
 	
