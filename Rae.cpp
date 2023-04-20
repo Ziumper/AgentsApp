@@ -131,7 +131,9 @@ namespace Rae {
 			return;
 		}
 
-		//here we are running the initialization for current 
+		//here we are running the interaction and stuff
+		//bool shouldInteract = mCurrentRecipient.suppilerNumbers
+		//if()
 
 		//here the current cycle is done let's check if it's last one
 		bool shouldSwitchToNextCycle = mCurrentCycle.round < cyclesAmount - 1;
@@ -172,6 +174,8 @@ namespace Rae {
 		//got to the end, all agents and cycles are initialized
 		mIsInitalizing = false;
 		logger->AddLog("Initialization is done.");
+		logger->AddLog("Running with cycle: ", mCurrentCycle.round);
+
 		mIsRunning = true;
 	}
 
@@ -200,18 +204,15 @@ namespace Rae {
 
 		double reception = 0;
 		double serviceA = 0;
-
-		do {
-			serviceA = agentServiceRandomizer.GetEvenRandomNumber();
-			reception = std::pow(serviceA, expoG);
-			agent->serviceReception = reception;
-			logger->AddLog("Reception value set: ", reception);
-		} while (reception >= serviceA);
+		
+		serviceA = agentServiceRandomizer.GetEvenRandomNumber();
+		reception = std::pow(serviceA, expoG);
+		agent->serviceReception = reception;
+		logger->AddLog("Reception value set: ", reception);
 	}
 
 	int MonteCarlo::SetSuppilersAmountForRecipient()
 	{
-		logger->AddLog("Choosing the suppliers amount for agent: ", mCurrentRecipient.number);
 		Randomizer randomizer = Randomizer(kMin, kMax);
 		mCurrentRecipient.suppliersAmount = randomizer.GetEvenRandomNumber();
 
@@ -221,6 +222,14 @@ namespace Rae {
 
 		//preserve
 		mAgents[mCurrentRecipient.number].CopyValues(mCurrentRecipient);
+
+		std::string message = "Choosen the suppliers amount for agent: ";
+		message.append(std::to_string(mCurrentRecipient.number));
+		message.append(" with ");
+		message.append(std::to_string(mCurrentRecipient.suppliersAmount));
+		message.append(" suppilers");
+
+		logger->AddLog(message.c_str());
 
 		return mCurrentRecipient.suppliersAmount;
 	}
