@@ -54,12 +54,20 @@ namespace Rae
 		double serviceAvailiability{ 0 };
 		double serviceReception{ 0 };
 		bool isStrategicAgent{ false };
-		bool wasRecipent{ false };
+		bool wasRecipient{ false };
+		int suppliersAmount{ 0 };
+		std::vector<int> suppilerNumbers;
+		void ResetForNextCycle() {
+			suppliersAmount = 0; 
+			serviceReception = 0;
+			serviceAvailiability = 0;
+		}
+
+		void CopyValues(Agent agent);
 	};
 
 	class Cycle {
 		std::vector<Agent> mAgents;
-		Agent mRecipientAgent{ 0 };
 	public:
 		int round{ 0 };
 		Cycle(int roundNumber) : round(roundNumber) {};
@@ -98,16 +106,16 @@ namespace Rae
 	class MonteCarlo {
 	private:
 		Cycle mCurrentCycle;
+		Agent mCurrentRecipient;
+		Agent mCurrentSuppiler;
 		std::vector<Agent> mAgents;
 		std::vector<Cycle> mCycles;
 		bool mIsRunning{ false };
 		bool mIsInitalizing{ false };
-		//void ChooseSuppilers(Cycle *cycle);
-		//void CreateAgents();
-		//void CreateCycles();
 		void SwitchToNextCycle();
 		void SetServiceAvailiabilityForAgent(Agent* agent);
 		void SetServiceReceptionForAgent(Agent* agent);
+		int SetSuppilersAmountForRecipient();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
 	public:
@@ -124,7 +132,9 @@ namespace Rae
 		MonteCarlo(RaeLogger* logger);
 		void Start();
 		void Update();
+		void Run();
 		void Initialize();
+		//Agent GetSuppilerForRecipient();
 	};
 
 	//TODO

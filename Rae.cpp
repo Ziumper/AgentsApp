@@ -94,6 +94,88 @@ namespace Rae {
 		return cycle;
 	}
 
+	void MonteCarlo::Start()
+	{
+		logger->AddLog("Starting initialization of Monte Carlo Simulation");
+
+		mIsInitalizing = false;
+
+		//reset
+		mAgents.clear();
+		mCycles.clear();
+
+		mAgentsFactory = AgentsFactory(beginTrustMesaure, strategicAgentsAmount, logger);
+		mCycleFactory = CycleFactory(logger);
+
+		MonteCarlo::mIsInitalizing = true;
+	}
+
+	void MonteCarlo::Update()
+	{
+		if (mIsInitalizing) {
+			Initialize();
+			return;
+		}
+
+		if (mIsRunning) {
+			Run();
+		}
+	}
+
+	void MonteCarlo::Run()
+	{
+		//here procceding with agents for current cycle recipient
+		bool shouldSetSuppilerForCurrentRecipient = mCurrentRecipient.suppliersAmount == 0;
+		if (shouldSetSuppilerForCurrentRecipient) {
+			SetSuppilersAmountForRecipient();
+			return;
+		}
+
+		//here we are running the initialization for current 
+
+		//here the current cycle is done let's check if it's last one
+		bool shouldSwitchToNextCycle = mCurrentCycle.round < cyclesAmount - 1;
+		if (shouldSwitchToNextCycle) {
+			SwitchToNextCycle();
+			return;
+		}
+
+		//here we are done
+		mIsRunning = false;
+		logger->AddLog("Monte Carlo simulation is done");
+	}
+
+	void MonteCarlo::Initialize()
+	{
+		//create agents
+		int agentsCount = (int)mAgents.size();
+		bool shouldCreateAgents = agentsCount <= agentsAmount - 1;
+		if (shouldCreateAgents) {
+			Agent agent = mAgentsFactory.Create(mAgents.size());
+			mAgents.push_back(agent);
+			return;
+		}
+
+		//create cycles
+		bool shouldCreateCycles = mCycles.size() <= cyclesAmount - 1;
+		if (shouldCreateCycles)
+		{
+			Cycle cycle = mCycleFactory.Create((int)mCycles.size());
+			mCycles.push_back(cycle);
+			return;
+		}
+
+		//start with first agent and cycle
+		mCurrentCycle = mCycles[0];
+		mCurrentRecipient = mAgents[0];
+
+		//got to the end, all agents and cycles are initialized
+		mIsInitalizing = false;
+		logger->AddLog("Initialization is done.");
+		mIsRunning = true;
+	}
+
+
 	void MonteCarlo::SetServiceAvailiabilityForAgent(Agent* agent)
 	{
 		logger->AddLog("setting service availiability for agent: ", agent->number);
@@ -127,20 +209,42 @@ namespace Rae {
 		} while (reception >= serviceA);
 	}
 
+	int MonteCarlo::SetSuppilersAmountForRecipient()
+	{
+		logger->AddLog("Choosing the suppliers amount for agent: ", mCurrentRecipient.number);
+		Randomizer randomizer = Randomizer(kMin, kMax);
+		mCurrentRecipient.suppliersAmount = randomizer.GetEvenRandomNumber();
+
+		//randomly choose for current cycle agent suppilers 
+		Randomizer suppilerRandomizer = Randomizer(0, mCurrentRecipient.suppliersAmount-1);
+		mCurrentRecipient.suppilerNumbers = suppilerRandomizer.GetEvenDistribute(mCurrentRecipient.suppliersAmount);
+
+		//preserve
+		mAgents[mCurrentRecipient.number].CopyValues(mCurrentRecipient);
+
+		return mCurrentRecipient.suppliersAmount;
+	}
+
 	void MonteCarlo::SwitchToNextCycle()
 	{
-		//preserve agents as copy
-		mAgents = mCurrentCycle.GetAgents();
+		logger->AddLog("Current cycle done: ", mCurrentCycle.round);
+		//preserve agents in done as copy
+		mCycles[mCurrentCycle.round].SetAgents(mAgents);
 
 		//get next cycle
 		int next = mCurrentCycle.round + 1;
 		Cycle nextCycle = mCycles[next];
 
-		//set agents for next cycle
-		nextCycle.SetAgents(mAgents);
+		//set next cycle
 		mCurrentCycle = nextCycle;
+		logger->AddLog("Moved to next cycle: ", mCurrentCycle.round);
+		//reset agents
+		logger->AddLog("Reseting agents");
+		for (Agent& agent : mAgents) {
+			agent.ResetForNextCycle();
+		}
 
-		//nextCycle.Start();
+		mCurrentRecipient = mAgents[0];
 	}
 
 	MonteCarlo::MonteCarlo(RaeLogger* logger)
@@ -148,87 +252,39 @@ namespace Rae {
 		this->logger = logger;
 	}
 
-	void MonteCarlo::Start()
-	{
-		logger->AddLog("Starting initialization of Monte Carlo Simulation");
-
-		mIsInitalizing = false;
-
-		//reset
-		mAgents.clear();
-		mCycles.clear();
-
-		mAgentsFactory = AgentsFactory(beginTrustMesaure, strategicAgentsAmount, logger);
-		mCycleFactory = CycleFactory(logger);
-
-		MonteCarlo::mIsInitalizing = true;
-	}
-
-	void MonteCarlo::Update()
-	{
-		if (mIsInitalizing) {
-			Initialize();
-			return;
-		}
-	}
-
-	void MonteCarlo::Initialize()
-	{
-		//create agents
-		int agentsCount = (int)mAgents.size();
-		bool shouldCreateAgents = agentsCount <= agentsAmount - 1;
-		if (shouldCreateAgents) {
-			Agent agent = mAgentsFactory.Create(mAgents.size());
-			mAgents.push_back(agent);
-			return;
-		}
-
-		//create cycles
-		bool shouldCreateCycles = mCycles.size() <= cyclesAmount - 1;
-		if (shouldCreateCycles)
-		{
-			Cycle cycle = mCycleFactory.Create((int)mCycles.size());
-			cycle.SetAgents(mAgents);
-			mCycles.push_back(cycle);
-			return;
-		}
-
-		//got to the end all agents and cycles are initialized
-		mIsInitalizing = false;
-	}
+	
 
 	
+	//Agent MonteCarlo::GetSuppilerForRecipient()
+	//{
+	//	Agent* recipient = mCurrentRecipient;
+	//	//recipent would be the one from round
+	//	recipient->wasRecipient = true;
+
+	//	std::vector<int> cycleAgentSuppilerNumbers = supplierRandomizer.GetEvenDistribute(recipient->suppliersAmount); //distribute random from amount of agents to choose
+
+	//	std::vector<Agent> suppilers;
+	//	int choosenRecipentsCounter = 0;
+	//	for (int& number : cycleAgentSuppilerNumbers) {
+	//		//special case handle when we got recipent inside suppiler / shouldn't happen so often
+	//		Agent suppiler = mAgents[number];
+	//		//SetServiceAvailiabilityForAgent(&supplier);
+	//		suppilers.push_back(suppiler);
+	//	}
+
+	void Agent::CopyValues(Agent agent)
+	{
+		this->isStrategicAgent = agent.isStrategicAgent;
+		this->number = agent.number;
+		this->serviceAvailiability = agent.serviceAvailiability;
+		this->serviceReception = agent.serviceReception;
+		this->suppilerNumbers = agent.suppilerNumbers;
+		this->suppliersAmount = agent.suppliersAmount;
+	}
+
+	//	return suppilers;
+	//}
 }
-
-//void MonteCarlo::ChooseSuppilers(Cycle* cycle)
-//{
-//	for (Agent& recipent : cycle->agents) {
-//		std::this_thread::sleep_for(std::chrono::seconds(2));
-//		//recipent would be the one from round
-//		recipent.wasRecipent = true;
-
-//		logger->AddLog("Choosing the suppliers agents for agent: ", recipent.number);
-//		Randomizer randomizer = Randomizer(kMin, kMax);
-//		int suppilersAmount = randomizer.GetEvenRandomNumber();
-
-//		int amountOfAgentsLeft = agentsAmount - 1;
-//		Randomizer supplierRandomizer = Randomizer(0, amountOfAgentsLeft); //amount of agents to choose from
-
-//		std::vector<int> cycleAgentSuppilerNumbers = supplierRandomizer.GetEvenDistribute(suppilersAmount); //distribute random from amount of agents to choose
-
-//		std::vector<Agent> suppilers;
-//		int choosenRecipentsCounter = 0;
-//		for (int& number : cycleAgentSuppilerNumbers) {
-//			//special case handle when we got recipent inside suppiler / shouldn't happen so often
-//			while (number == recipent.number) {
-//				number = supplierRandomizer.GetEvenRandomNumber();
-//			}
-
-//			Agent supplier = cycle->agents[number];
-//			//SetServiceAvailiabilityForAgent(&supplier);
-//			suppilers.push_back(supplier);
-//		}
-//
 
 //inline Agent AgentsFactory::Create()
 //{
