@@ -4,6 +4,7 @@
 #include <string_view>
 #include <random>
 #include <string>
+#include <map>
 
 namespace Rae
 {
@@ -103,6 +104,17 @@ namespace Rae
 		Cycle Create(int number);
 	};
 
+	class ReportedService {
+	public:
+		int RecipientNumber;
+		double reportedValue;
+	};
+
+	class RaeAggregator {
+	public:
+		static double CalculateRaeForCycleSupplier(Agent supplier, double reportedServiceValue, int suppliersAmount);
+	};
+
 	class MonteCarlo {
 	private:
 		Cycle mCurrentCycle;
@@ -112,10 +124,18 @@ namespace Rae
 		std::vector<Agent> mAgents;
 		std::vector<Cycle> mCycles;
 		std::vector<Agent> mSuppliers;
+
+		/// <summary>
+		/// Map with 
+		/// first int - recipient index
+		/// second map with - supplier index
+		/// vector inside is - collection of reported values for supplier ( can be many ) 
+		/// </summary>
+		std::map<int,std::map<int,std::vector<double>>> mReported;
 		bool mIsRunning{ false };
 		bool mIsInitalizing{ false };
-		void SetServiceAvailiabilityForAgent(Agent* agent);
-		void SetServiceReceptionForAgent(Agent* agent);
+		void SetServiceAvailiabilityForSupplier();
+		void SetServiceReceptionForRecipient();
 		void Interact();
 		void Run();
 		void Initialize();

@@ -156,8 +156,27 @@ namespace Rae {
 	{
 		if (boostMode) {
 			for (; mInteractionIndex < mCurrentRecipient.suppliersNumbers.size();) {
-				MoveToNextInteraction();
+				SetServiceReceptionForRecipient();
+				SetServiceAvailiabilityForSupplier();
+
+				//TODO calculate some policy. // it's random so far
+				RealRandomizer randomizer = RealRandomizer(0, 1);
+				
+				/// <summary>
+				/// Rij
+				/// </summary>
+				double recipientPolicy = randomizer.GetEvenRandomNumber();
+
+				/// <summary>
+				/// Pij
+				/// </summary> 
+				double suppilerPolicy = randomizer.GetEvenRandomNumber();
+
+				//add reported value for pair suppiler and recipient
+				mReported[mCurrentRecipient.number][mCurrentSupplier.number].push_back(recipientPolicy);
+
 				LogInteraction();
+				MoveToNextInteraction();
 			}
 
 			return;
@@ -223,26 +242,25 @@ namespace Rae {
 		mIsRunning = true;
 	}
 
-	void MonteCarlo::SetServiceAvailiabilityForAgent(Agent* agent)
+	void MonteCarlo::SetServiceAvailiabilityForSupplier()
 	{
-		logger->AddLog("setting service availiability for agent: ", agent->number);
 		RealRandomizer agentServiceRandomizer = RealRandomizer(0, 1);
 
 		double serviceA = 0;
 		double availiability = 0;
+		serviceA = agentServiceRandomizer.GetEvenRandomNumber();
+		availiability = std::pow(serviceA, expoA);
+		mCurrentSupplier.serviceAvailiability = availiability;
 
-		do
-		{
-			serviceA = agentServiceRandomizer.GetEvenRandomNumber();
-			availiability = std::pow(serviceA, expoA);
-			agent->serviceAvailiability = availiability;
-			logger->AddLog("setting avialibility: ", availiability);
-		} while (availiability >= serviceA);
+		std::string message = "setting service availiability for agent supplier: ";
+		message.append(std::to_string(mCurrentSupplier.number))
+			.append(". Service avialiability: ")
+			.append(std::to_string(mCurrentSupplier.serviceAvailiability));
+		logger->AddLog(message.c_str());
 	}
 
-	void MonteCarlo::SetServiceReceptionForAgent(Agent* agent)
+	void MonteCarlo::SetServiceReceptionForRecipient()
 	{
-		logger->AddLog("setting reception for agent", agent->number);
 		RealRandomizer agentServiceRandomizer = RealRandomizer(0, 1);
 
 		double reception = 0;
@@ -250,8 +268,13 @@ namespace Rae {
 		
 		serviceA = agentServiceRandomizer.GetEvenRandomNumber();
 		reception = std::pow(serviceA, expoG);
-		agent->serviceReception = reception;
-		logger->AddLog("Reception value set: ", reception);
+		mCurrentRecipient.serviceReception = reception;
+
+		std::string message = "setting service recipient for agent supplier: ";
+		message.append(std::to_string(mCurrentRecipient.number))
+			.append(". Service reception: ")
+			.append(std::to_string(mCurrentRecipient.serviceReception));
+		logger->AddLog(message.c_str());
 	}
 
 	int MonteCarlo::SetSuppliersAmountForRecipient()
@@ -311,6 +334,22 @@ namespace Rae {
 
 	void MonteCarlo::MoveToNextCycle()
 	{
+		//TODO do reporting
+		logger->AddLog("Starting reporting to RAE");
+
+		double sum = 0;
+
+		//for (int& supplierIndex : mCurrentRecipient.suppliersNumbers) {
+		//	double trustRecipient = mCurrentRecipient.trust;
+
+		//	//lets' sum it
+		//	std::vector<double> reportedValuesFromRecipientAboutSupplier = mReported[mCurrentRecipient.number][supplierIndex];
+		//	for(double )
+
+
+		//}
+
+		//move to next one
 		logger->AddLog("Current cycle done: ", mCurrentCycle.round);
 		//preserve agents in done as copy
 		mCycles[mCurrentCycle.round].SetAgents(mAgents);
@@ -335,9 +374,8 @@ namespace Rae {
 		//preserve values of recipient
 		mAgents[mCurrentRecipient.number].CopyValues(mCurrentRecipient);
 
-		//TODO do report
-
-		//move to next one
+		//we have finished the interactions so natural is to save report results to RAE and adjust trust values
+	
 		int indexOfRecipient = mCurrentRecipient.number + 1;
 		mCurrentRecipient = mAgents[indexOfRecipient];
 
@@ -372,6 +410,16 @@ namespace Rae {
 		this->logger = logger;
 	}
 
-	
+
+	double RaeAggregator::CalculateRaeForCycleSupplier(Agent supplier, double reportedServiceValue, int suppliersAmount)
+	{
+		double trust = supplier.trust;
+
+
+
+
+		return 0.0;
+	}
+
 }
 
