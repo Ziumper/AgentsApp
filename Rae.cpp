@@ -84,7 +84,7 @@ namespace Rae {
 
 		mLogger->AddLog("Created agent:", agent.number);
 
-		return Agent();
+		return agent;
 	}
 
 	Cycle CycleFactory::Create(int number)
@@ -125,15 +125,33 @@ namespace Rae {
 	void MonteCarlo::Run()
 	{
 		//here procceding with agents for current cycle recipient
-		bool shouldSetSuppilerForCurrentRecipient = mCurrentRecipient.suppliersAmount == 0;
+		bool shouldSetSuppilerForCurrentRecipient = mCurrentRecipient.suppilersAmount == 0;
 		if (shouldSetSuppilerForCurrentRecipient) {
 			SetSuppilersAmountForRecipient();
 			return;
 		}
 
-		//here we are running the interaction and stuff
-		//bool shouldInteract = mCurrentRecipient.suppilerNumbers
-		//if()
+		//here goes the interaction
+		bool shouldInteract = mSuppilers.size() < mCurrentRecipient.suppilersAmount;
+		if (shouldInteract) {
+			std::string interactMessage =" Interaction index: ";
+
+			interactMessage
+				.append(std::to_string(mInteractionIndex))
+				.append(" ;Cycle: ")
+				.append(std::to_string(mCurrentCycle.round))
+				.append(" ;Recipent: ")
+				.append(std::to_string(mCurrentRecipient.number))
+				.append(" is interacting with Suppiler agent number: ")
+				.append(std::to_string(mCurrentSuppiler.number));
+
+			logger->AddLog(interactMessage.c_str());
+
+			MoveToNextInteraction();
+
+			return;
+		}
+
 
 		//here the current cycle is done let's check if it's last one
 		bool shouldSwitchToNextCycle = mCurrentCycle.round < cyclesAmount - 1;
@@ -151,7 +169,7 @@ namespace Rae {
 	{
 		//create agents
 		int agentsCount = (int)mAgents.size();
-		bool shouldCreateAgents = agentsCount <= agentsAmount - 1;
+		bool shouldCreateAgents = agentsCount < agentsAmount;
 		if (shouldCreateAgents) {
 			Agent agent = mAgentsFactory.Create(mAgents.size());
 			mAgents.push_back(agent);
@@ -159,7 +177,7 @@ namespace Rae {
 		}
 
 		//create cycles
-		bool shouldCreateCycles = mCycles.size() <= cyclesAmount - 1;
+		bool shouldCreateCycles = mCycles.size() < cyclesAmount;
 		if (shouldCreateCycles)
 		{
 			Cycle cycle = mCycleFactory.Create((int)mCycles.size());
@@ -213,25 +231,52 @@ namespace Rae {
 
 	int MonteCarlo::SetSuppilersAmountForRecipient()
 	{
-		Randomizer randomizer = Randomizer(kMin, kMax);
-		mCurrentRecipient.suppliersAmount = randomizer.GetEvenRandomNumber();
+		//reset suppilers
+		mSuppilers.clear();
+		mInteractionIndex = 0;
 
-		//randomly choose for current cycle agent suppilers 
-		Randomizer suppilerRandomizer = Randomizer(0, mCurrentRecipient.suppliersAmount-1);
-		mCurrentRecipient.suppilerNumbers = suppilerRandomizer.GetEvenDistribute(mCurrentRecipient.suppliersAmount);
+		Randomizer randomizer = Randomizer(kMin, kMax);
+		mCurrentRecipient.suppilersAmount = randomizer.GetEvenRandomNumber();
+		mCurrentRecipient.wasRecipient = true;
 
 		//preserve
 		mAgents[mCurrentRecipient.number].CopyValues(mCurrentRecipient);
 
-		std::string message = "Choosen the suppliers amount for agent: ";
+		//set suppilers
+		int suppilersIndexTopBoundary = mCurrentRecipient.suppilersAmount-1;
+		Randomizer suppilerRandomizer = Randomizer(0, suppilersIndexTopBoundary);
+		mCurrentRecipient.suppilersNumbers = suppilerRandomizer.GetEvenDistribute(mCurrentRecipient.suppilersAmount);
+
+		for (int& suppilerIndex : mCurrentRecipient.suppilersNumbers) {
+			//special case handling
+			while (mCurrentRecipient.number == suppilerIndex) {
+				suppilerIndex = suppilerRandomizer.GetEvenRandomNumber();
+			}
+		}
+
+		std::string message = "";
+		message.append("Choosen the suppliers amount for recipient number : ");
 		message.append(std::to_string(mCurrentRecipient.number));
 		message.append(" with ");
-		message.append(std::to_string(mCurrentRecipient.suppliersAmount));
+		message.append(std::to_string(mCurrentRecipient.suppilersAmount));
 		message.append(" suppilers");
 
 		logger->AddLog(message.c_str());
 
-		return mCurrentRecipient.suppliersAmount;
+		//set first suppiler for agent
+		mInteractionIndex = 0;
+		int suppilerNumber = mCurrentRecipient.suppilersNumbers[mInteractionIndex];
+		mCurrentSuppiler = mAgents[suppilerNumber];
+		
+		return mCurrentRecipient.suppilersAmount;
+	}
+
+	void MonteCarlo::MoveToNextInteraction() {
+		int suppilerNumber = mCurrentRecipient.suppilersNumbers[mInteractionIndex];
+		mCurrentSuppiler = mAgents[suppilerNumber];
+		mSuppilers.push_back(mCurrentSuppiler);
+		mInteractionIndex++;
+
 	}
 
 	void MonteCarlo::SwitchToNextCycle()
@@ -261,42 +306,16 @@ namespace Rae {
 		this->logger = logger;
 	}
 
-	
-
-	
-	//Agent MonteCarlo::GetSuppilerForRecipient()
-	//{
-	//	Agent* recipient = mCurrentRecipient;
-	//	//recipent would be the one from round
-	//	recipient->wasRecipient = true;
-
-	//	std::vector<int> cycleAgentSuppilerNumbers = supplierRandomizer.GetEvenDistribute(recipient->suppliersAmount); //distribute random from amount of agents to choose
-
-	//	std::vector<Agent> suppilers;
-	//	int choosenRecipentsCounter = 0;
-	//	for (int& number : cycleAgentSuppilerNumbers) {
-	//		//special case handle when we got recipent inside suppiler / shouldn't happen so often
-	//		Agent suppiler = mAgents[number];
-	//		//SetServiceAvailiabilityForAgent(&supplier);
-	//		suppilers.push_back(suppiler);
-	//	}
-
 	void Agent::CopyValues(Agent agent)
 	{
 		this->isStrategicAgent = agent.isStrategicAgent;
 		this->number = agent.number;
 		this->serviceAvailiability = agent.serviceAvailiability;
 		this->serviceReception = agent.serviceReception;
-		this->suppilerNumbers = agent.suppilerNumbers;
-		this->suppliersAmount = agent.suppliersAmount;
+		this->suppilersNumbers = agent.suppilersNumbers;
+		this->suppilersAmount = agent.suppilersAmount;
 	}
 
-	//	return suppilers;
-	//}
+	
 }
 
-//inline Agent AgentsFactory::Create()
-//{
-//}
-
-//
