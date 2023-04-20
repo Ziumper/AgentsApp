@@ -7,7 +7,6 @@
 #include "imgui_impl_win32.h"
 #include <d3d9.h>
 #include <tchar.h>
-
 #include "Application.h";
 
 // Data

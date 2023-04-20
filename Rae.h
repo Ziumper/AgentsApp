@@ -7,7 +7,6 @@
 
 namespace Rae
 {
-
 	class Randomizer {
 	private:
 		int mMin;
@@ -31,7 +30,6 @@ namespace Rae
 		std::vector<double> GetEventDistribute(double amount);
 		double GetEvenRandomNumber();
 	};
-
 
 	class GoodWill {
 	public:
@@ -66,45 +64,35 @@ namespace Rae
 		int round{ 0 };
 		Cycle(int roundNumber) : round(roundNumber) {};
 		Cycle() : round(0) {};
-		bool IsDone();
 		void SetAgents(std::vector<Agent> agents) { mAgents = agents; };
 		std::vector<Agent> GetAgents() { return mAgents; }
-		void Start();
 	};
 
-	template<typename T>
-	class Factory {
-	protected:
-		int mCounter{ 0 };
-		int mAmount{ 0 };
-		std::vector<T> mObjects;
-	public:
-		Factory<T>(int amount) : mAmount(amount) {};
-		std::vector<T> GetObjects() { return mObjects; }
-		inline bool IsDone() {
-			return mCounter >= mAmount;
-		}
-		inline virtual void Create() = 0;
-	};
 
-	class AgentsFactory: Factory<Agent> {
+
+	class AgentsFactory {
 	private:
-		double mBeginingTrustLevel;
-		int mStrategicCount;
+		double mBeginingTrustLevel{ 0 };
+		int mStrategicCount{ 0 };
+		RaeLogger* mLogger{ 0 };
 	public:
-		AgentsFactory(int amount, double trustLevel,int strategic) : 
-			Factory<Agent>(amount), 
+		AgentsFactory() {};
+		AgentsFactory(double trustLevel,int strategic, RaeLogger *logger) :
 			mBeginingTrustLevel(trustLevel),
-			mStrategicCount(strategic) {};
-		inline void Create() override;
+			mStrategicCount(strategic),
+			mLogger(logger)
+		{};
+		Agent Create();
+		Agent Create(int number);
 	};
 
-	class CycleFactory: Factory<Cycle> {
+	class CycleFactory {
 	private:
-		std::vector<Agent> mAgents;
+		RaeLogger* mLogger{ 0 };
 	public:
-		CycleFactory(int amount, std::vector<Agent> agents) : Factory<Cycle>(amount), mAgents(agents) {};
-		inline void Create() override;
+		CycleFactory() {};
+		CycleFactory(RaeLogger *logger): mLogger(logger) {};
+		Cycle Create(int number);
 	};
 
 	class MonteCarlo {
@@ -113,12 +101,15 @@ namespace Rae
 		std::vector<Agent> mAgents;
 		std::vector<Cycle> mCycles;
 		bool mIsRunning{ false };
+		bool mIsInitalizing{ false };
 		//void ChooseSuppilers(Cycle *cycle);
-		void CreateAgents();
-		void CreateCycles();
+		//void CreateAgents();
+		//void CreateCycles();
 		void SwitchToNextCycle();
 		void SetServiceAvailiabilityForAgent(Agent* agent);
 		void SetServiceReceptionForAgent(Agent* agent);
+		AgentsFactory mAgentsFactory;
+		CycleFactory mCycleFactory;
 	public:
 		int cyclesAmount{ 3 };
 		int agentsAmount{ 1000 };
@@ -130,17 +121,17 @@ namespace Rae
 		double beginTrustMesaure{ 1 };
 		RaeLogger* logger;
 		GoodWill goodWill{ GoodWill() };
-		MonteCarlo(RaeLogger* logger) : logger(logger) {};
+		MonteCarlo(RaeLogger* logger);
 		void Start();
 		void Update();
+		void Initialize();
 	};
 
-	
-	//TODO 
+	//TODO
 	/*
-	* 1. Przerobiæ konstruktory 
+	* 1. Przerobiæ konstruktory
 	* 2. Przekopiowaæ referencje do tablicy z mCurrentCycle do mCycles
-	* 3. To samo zrobiæ dla agentów - punkt 2 
-	* 4. Update dla agenta i losowanie pojedyñczego agenta 
+	* 3. To samo zrobiæ dla agentów - punkt 2
+	* 4. Update dla agenta i losowanie pojedyñczego agenta
 	*/
 }
