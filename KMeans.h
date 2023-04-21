@@ -20,6 +20,6 @@ private:
 public:
 	KMeans(int amount, std::map<int, double> values) : mClustersAmount(amount), mValues(values) {};
 	std::vector<Cluster> CreateClusers();
-	std::vector<int> GetRandomStartingPoints();
+	std::vector<double> GetRandomStartingPoints();
 	double GetMaxFromValues();
 };

@@ -12,8 +12,8 @@ std::vector<Cluster> KMeans::CreateClusers()
 	for (int i = 0; i < mClustersAmount; i++) {
 		Cluster cluster = Cluster();
 		cluster.Number = i;
-		int startingNumber = startingPoints[i];
-		double average = mValues[startingNumber];
+		//int startingNumber = startingPoints[i];
+		double average = 0;
 		cluster.AverageValue = average;
 		clusters.push_back(cluster);
 	}
@@ -21,23 +21,29 @@ std::vector<Cluster> KMeans::CreateClusers()
 	return clusters;
 }
 
-std::vector<int> KMeans::GetRandomStartingPoints() {
+std::vector<double> KMeans::GetRandomStartingPoints() {
 
 	//1. Get maximum from mValues double value
-	Randomizer randomizer = Randomizer(0, mValues.size());
+	double max = GetMaxFromValues();
+	RealRandomizer randomizer = RealRandomizer(0, max);
+	std::vector<double> points;
 
-	std::vector<int> pointsIndexs;
-
-	/*for (int i = 0; i < mClustersAmount; i++) {
-		int pointIndex = randomizer.GetEvenRandomNumber();
-
-		for (int& index : pointsIndexs) {
-			double pointsIndex
+	for (int i = 0; i < this->mClustersAmount; i++) {
+		double randomStartingPoint = randomizer.GetEvenRandomNumber();
+		if (points.size() > 0) {
+			//check if it's already inside points
+			for (double &point : points) {
+				while (randomStartingPoint == point) {
+					randomStartingPoint = randomizer.GetEvenRandomNumber();
+				}
+			}
 		}
-	}
-	*/
 
-	return pointsIndexs;
+		//add 
+		points.push_back(randomStartingPoint);
+	}
+
+	return points;
 }
 
 double KMeans::GetMaxFromValues() {

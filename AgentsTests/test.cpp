@@ -45,3 +45,9 @@ TEST(KMeansTest, CanGetMaxFromValues) {
 
 	EXPECT_DOUBLE_EQ(max, maxFromTests);
 }
+
+
+TEST(KMeansTest, CanRequiredClustersSize) {
+	KMeans kMeans = GetTestKMeans();
+	EXPECT_EQ(amountClusters,kMeans.CreateClusers().size());
+}
