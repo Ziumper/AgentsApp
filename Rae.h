@@ -144,7 +144,6 @@ namespace Rae
 		int CurrentCycleNumber() { return mCurrentCycle.Round; }
 		bool IsWorking(){ return mIsRunning || mIsInitalizing; }
 		std::vector<float> GetTrustLevels();
-	
 	};
 
 	//TODO

@@ -39,3 +39,17 @@ std::vector<int> KMeans::GetRandomStartingPoints() {
 
 	return pointsIndexs;
 }
+
+double KMeans::GetMaxFromValues() {
+
+	double max = 0;
+
+	for (int i = 0; i < mValues.size(); i++) {
+		double checkValue = mValues[i];
+		if (checkValue > max) {
+			max = checkValue;
+		}
+	}
+
+	return max;
+}

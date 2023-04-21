@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "../Randomizer.h"
 #include <vector>
+#include "../KMeans.h"
 
 
 TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
@@ -28,4 +29,19 @@ TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
 	//if calcul
 	EXPECT_LT(calculatedMean, rangeBoundUp);
 	EXPECT_GT(calculatedMean, rangeBoundDown);
+}
+
+static int amountClusters = 2;
+static std::map<int, double> map = { {1,0.1},{2,0.2},{3,0.3} ,{4,0.4},{5,0.5} };
+KMeans GetTestKMeans() {
+	return KMeans(amountClusters, map);
+}
+
+TEST(KMeansTest, CanGetMaxFromValues) {
+	double max = map[map.size()];
+
+	KMeans testing = GetTestKMeans();
+	double maxFromTests = testing.GetMaxFromValues();
+
+	EXPECT_DOUBLE_EQ(max, maxFromTests);
 }
