@@ -5,32 +5,10 @@
 #include <random>
 #include <string>
 #include <map>
+#include <unordered_map>
 
 namespace Rae
 {
-	class Randomizer {
-	private:
-		int mMin;
-		int mMax;
-		std::uniform_int_distribution<> distributor;
-		std::mt19937 generator;
-	public:
-		Randomizer(int min, int max);
-		std::vector<int> GetEvenDistribute(int amount);
-		int GetEvenRandomNumber();
-	};
-
-	class RealRandomizer {
-	private:
-		double mMin;
-		double mMax;
-		std::uniform_real_distribution<> distributor;
-		std::mt19937 generator;
-	public:
-		RealRandomizer(double mMin, double mMax);
-		std::vector<double> GetEventDistribute(double amount);
-		double GetEvenRandomNumber();
-	};
 
 	class GoodWill {
 	public:
@@ -78,8 +56,6 @@ namespace Rae
 		std::vector<Agent> GetAgents() { return mAgents; }
 	};
 
-
-
 	class AgentsFactory {
 	private:
 		double mBeginingTrustLevel{ 0 };
@@ -111,6 +87,7 @@ namespace Rae
 		double reportedValue;
 	};
 
+
 	class MonteCarlo {
 	private:
 		Cycle mCurrentCycle;
@@ -128,7 +105,7 @@ namespace Rae
 		/// <summary>
 		/// Average Ri(t) for agent i
 		/// </summary>
-		std::map<double, int> mReportedAverage;
+		std::unordered_map <int,double> mReportedAverage;
 		bool mIsRunning{ false };
 		bool mIsInitalizing{ false };
 		void SetServiceAvailiabilityForSupplier();
@@ -145,6 +122,7 @@ namespace Rae
 		void CreateAgent();
 		void UpdateInteraction();
 		void ReportAgents();
+		 
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
 	public:
@@ -166,10 +144,7 @@ namespace Rae
 		int CurrentCycleNumber() { return mCurrentCycle.Round; }
 		bool IsWorking(){ return mIsRunning || mIsInitalizing; }
 		std::vector<float> GetTrustLevels();
-			
-		
 	
-		//Agent GetSuppilerForRecipient();
 	};
 
 	//TODO
