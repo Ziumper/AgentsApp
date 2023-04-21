@@ -165,6 +165,9 @@ namespace Rae
 		int CurrentRecipientNumberInCycle() { return mCurrentRecipient.Number+1; }
 		int CurrentCycleNumber() { return mCurrentCycle.Round; }
 		bool IsWorking(){ return mIsRunning || mIsInitalizing; }
+		std::vector<float> GetTrustLevels();
+			
+		
 	
 		//Agent GetSuppilerForRecipient();
 	};

@@ -318,9 +318,6 @@ namespace Rae {
 		mCurrentRecipient.suppliersAmount = randomizer.GetEvenRandomNumber();
 		mCurrentRecipient.wasRecipient = true;
 
-		//preserve
-		mAgents[mCurrentRecipient.Number].CopyValues(mCurrentRecipient);
-
 		//set suppilers
 		int suppilersIndexTopBoundary = mCurrentRecipient.suppliersAmount-1;
 		Randomizer suppilerRandomizer = Randomizer(0, suppilersIndexTopBoundary);
@@ -355,7 +352,7 @@ namespace Rae {
 
 		//preserve supplier
 		mAgents[mCurrentSupplier.Number].CopyValues(mCurrentSupplier);
-
+		
 		mCurrentSupplier = mAgents[suppilerNumber];
 
 		mSuppliers.push_back(mCurrentSupplier);
@@ -390,11 +387,8 @@ namespace Rae {
 	}
 
 	void MonteCarlo::MoveToNextRecipient() {
-		//preserve values of recipient
+		//preserve first
 		mAgents[mCurrentRecipient.Number].CopyValues(mCurrentRecipient);
-
-		//we have finished the interactions so natural is to save report results to RAE and adjust trust values
-	
 		int indexOfRecipient = mCurrentRecipient.Number + 1;
 		mCurrentRecipient = mAgents[indexOfRecipient];
 
@@ -427,6 +421,11 @@ namespace Rae {
 			return true;
 		}
 
+		//preserve last one recipient values
+		if (mCurrentRecipient.Number == mAgents.size() - 1) {
+			mAgents[mCurrentRecipient.Number].CopyValues(mCurrentRecipient);
+		}
+
 		return false;
 	}
 
@@ -435,6 +434,14 @@ namespace Rae {
 		this->logger = logger;
 	}
 
+	std::vector<float> MonteCarlo::GetTrustLevels() {
+		std::vector<float> trust;
+		
+		for (Agent& agent : mAgents) {
+			trust.push_back(agent.serviceReception);
+		}
 
+		return trust;
+	}
 }
 
