@@ -171,7 +171,7 @@ namespace AgentsApp
 		ShowRtbsmWindow();
 
 	
-		//ImGui::ShowDemoWindow();
+		ImGui::ShowDemoWindow();
 	}
 
 	void ShowRtbsmWindow()
@@ -214,23 +214,28 @@ namespace AgentsApp
 		ImGui::End();
 
 		ImGui::Begin("ViewPort");
+
+		static float progress = 0.0f;
 		if (monteCarlo.IsWorking()) {
 			ImGui::Text("Work in progress...");
+			int currentRecipientCount = monteCarlo.CurrentRecipientNumberInCycle();
+			progress = (double)currentRecipientCount / (double)monteCarlo.agentsAmount;
+			// Typically we would use ImVec2(-1.0f,0.0f) or ImVec2(-FLT_MIN,0.0f) to use all available width,
+		// or ImVec2(width,0.0f) for a specified width. ImVec2(0.0f,0.0f) uses ItemWidth.
+			ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f));
+			ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
+			std::string message = "Cycle: ";
+			message.append(std::to_string(monteCarlo.CurrentCycleNumber()));
+			ImGui::Text(message.c_str());
 		}
 		else {
 			ImGui::Text("Ready to start ..");
+			progress = 0.0f;
 		}
 
-		static float progress = 0.0f;
-		int currentRecipientCount = monteCarlo.CurrentRecipientNumberInCycle();
-		progress = (double) currentRecipientCount / (double) monteCarlo.agentsAmount;
-		// Typically we would use ImVec2(-1.0f,0.0f) or ImVec2(-FLT_MIN,0.0f) to use all available width,
-		// or ImVec2(width,0.0f) for a specified width. ImVec2(0.0f,0.0f) uses ItemWidth.
-		ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f));
-		ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-		std::string message = "Cycle: ";
-		message.append(std::to_string(monteCarlo.CurrentCycleNumber()));
-		ImGui::Text(message.c_str());
+		
+		
+		
 
 		ImGui::End();
 	}
