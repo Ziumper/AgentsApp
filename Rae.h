@@ -43,14 +43,14 @@ namespace Rae
 	class RaeLogger {
 	public:
 		virtual void AddLog(const char* entry) = 0;
-		virtual void AddLog(const char* entry, const int number) = 0;
-		virtual void AddLog(const char* entry, const double number) = 0;
+		virtual void AddLog(const char* entry, const int Number) = 0;
+		virtual void AddLog(const char* entry, const double Number) = 0;
 		virtual ~RaeLogger() {};
 	};
 
 	class Agent {
 	public:
-		int number{ 0 };
+		int Number{ 0 };
 		double trust{ 0 };
 		double serviceAvailiability{ 0 };
 		double serviceReception{ 0 };
@@ -65,14 +65,15 @@ namespace Rae
 		}
 
 		void CopyValues(Agent agent);
+		double CalculateRaeIT();
 	};
 
 	class Cycle {
 		std::vector<Agent> mAgents;
 	public:
-		int round{ 0 };
-		Cycle(int roundNumber) : round(roundNumber) {};
-		Cycle() : round(0) {};
+		int Round{ 0 };
+		Cycle(int roundNumber) : Round(roundNumber) {};
+		Cycle() : Round(0) {};
 		void SetAgents(std::vector<Agent> agents) { mAgents = agents; };
 		std::vector<Agent> GetAgents() { return mAgents; }
 	};
@@ -92,7 +93,7 @@ namespace Rae
 			mLogger(logger)
 		{};
 		Agent Create();
-		Agent Create(int number);
+		Agent Create(int Number);
 	};
 
 	class CycleFactory {
@@ -101,18 +102,13 @@ namespace Rae
 	public:
 		CycleFactory() {};
 		CycleFactory(RaeLogger *logger): mLogger(logger) {};
-		Cycle Create(int number);
+		Cycle Create(int Number);
 	};
 
 	class ReportedService {
 	public:
 		int RecipientNumber;
 		double reportedValue;
-	};
-
-	class RaeAggregator {
-	public:
-		static double CalculateRaeForCycleSupplier(Agent supplier, double reportedServiceValue, int suppliersAmount);
 	};
 
 	class MonteCarlo {
@@ -126,12 +122,13 @@ namespace Rae
 		std::vector<Agent> mSuppliers;
 
 		/// <summary>
-		/// Map with 
-		/// first int - recipient index
-		/// second map with - supplier index
-		/// vector inside is - collection of reported values for supplier ( can be many ) 
+		///Sum of each Agent reported 
 		/// </summary>
-		std::map<int,std::map<int,std::vector<double>>> mReported;
+		std::map<int,double> mReportedSumForInteraction;
+		/// <summary>
+		/// Average Ri(t) for agent i
+		/// </summary>
+		std::map<int, double> mReportedAverage;
 		bool mIsRunning{ false };
 		bool mIsInitalizing{ false };
 		void SetServiceAvailiabilityForSupplier();
@@ -143,8 +140,11 @@ namespace Rae
 		void MoveToNextInteraction();
 		void MoveToNextCycle();
 		void MoveToNextRecipient();
-		void UpdateAgents();
+		bool UpdateAgents();
 		int SetSuppliersAmountForRecipient();
+		void CreateAgent();
+		void UpdateInteraction();
+		void ReportAgents();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
 	public:
@@ -162,8 +162,8 @@ namespace Rae
 		MonteCarlo(RaeLogger* logger);
 		void Start();
 		void Update();
-		int CurrentRecipientNumberInCycle() { return mCurrentRecipient.number+1; }
-		int CurrentCycleNumber() { return mCurrentCycle.round; }
+		int CurrentRecipientNumberInCycle() { return mCurrentRecipient.Number+1; }
+		int CurrentCycleNumber() { return mCurrentCycle.Round; }
 		bool IsWorking(){ return mIsRunning || mIsInitalizing; }
 	
 		//Agent GetSuppilerForRecipient();

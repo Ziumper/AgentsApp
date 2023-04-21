@@ -17,8 +17,8 @@ namespace AgentsApp
 		bool Enabled{ true };
 		void Clear();
 		void AddLog(const char* logEntry) override;
-		void AddLog(const char* logEntry,const int number) override;
-		void AddLog(const char* logEntry, const double number) override;
+		void AddLog(const char* logEntry,const int Number) override;
+		void AddLog(const char* logEntry, const double Number) override;
 		void Draw(const char* title, bool* p_open = NULL);
 		AgentsAppLog();
 	};

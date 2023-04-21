@@ -58,18 +58,18 @@ namespace AgentsApp
 		AddLogEntry(entry.c_str());
 	}
 
-	void AgentsAppLog::AddLog(const char* logEntry,const int number)
+	void AgentsAppLog::AddLog(const char* logEntry,const int Number)
 	{
 		std::string entry = logEntry;
-		auto numberAsString = std::to_string(number);
+		auto numberAsString = std::to_string(Number);
 		entry.append(numberAsString);
 		AddLog(entry.c_str());
 	}
 
-	void AgentsAppLog::AddLog(const char* logEntry, const double number)
+	void AgentsAppLog::AddLog(const char* logEntry, const double Number)
 	{
 		std::string entry = logEntry;
-		auto numberAsString = std::to_string(number);
+		auto numberAsString = std::to_string(Number);
 		entry.append(numberAsString);
 		AddLog(entry.c_str());
 	}
