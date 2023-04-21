@@ -51,3 +51,54 @@ TEST(KMeansTest, CanRequiredClustersSize) {
 	KMeans kMeans = GetTestKMeans();
 	EXPECT_EQ(amountClusters,kMeans.CreateClusers().size());
 }
+
+TEST(KMeansTest, CanGetTwoDifferentRandomPoints) {
+	KMeans kMeans = GetTestKMeans();
+
+	for (int i = 0; i < 1000; i++) {
+		std::vector<double> points = kMeans.GetRandomStartingPoints();
+		for (int j = 0; j < points.size(); j++) {
+			for (int k = 0; k < points.size(); k++) {
+				if (j != k) {
+					double first = points[j];
+					double second = points[k];
+					
+					bool equal = KMeans::IsTwoDoubleEqual(first, second);
+
+					EXPECT_FALSE(equal);
+				}
+			}
+		}
+	}
+}
+
+TEST(KMeansTest, ClustersHaveNotZeroStartingPoints) {
+	KMeans kMeans = GetTestKMeans();
+	std::vector<Cluster> clusters = kMeans.CreateClusers();
+
+	for (Cluster& cluster : clusters) {
+		EXPECT_FALSE(KMeans::IsTwoDoubleEqual(0, cluster.AverageValue));
+	}
+}
+
+TEST(KMeansTest, IsEqualDouble) {
+	double first = 0.1312312123131;
+	double second = first;
+
+	bool equal = KMeans::IsTwoDoubleEqual(first,second);
+
+	EXPECT_TRUE(equal);
+}
+
+TEST(KMeansTest, CanGetValidDistancesForPoint) {
+	std::map<int,double> testDistanceMap = { { 1,1.0 }, { 2,2.0 }, { 3,3.0 }, { 4,4.0 }, { 5,5.0 } };
+	auto kMeans = KMeans(2, testDistanceMap);
+	std::vector<double> valid = { 0.5, 1.5, 2.5, 3.5, 4.5 };
+	double point = 0.5;
+	std::vector<double> calculated = kMeans.CountDistances(point);
+
+	for (size_t i = 0; i < valid.size(); i++) {
+		EXPECT_DOUBLE_EQ(valid[i], calculated[i]);
+	}
+
+}

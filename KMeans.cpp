@@ -7,13 +7,13 @@
 std::vector<Cluster> KMeans::CreateClusers()
 {
 	std::vector<Cluster> clusters = std::vector<Cluster>();
-	std::vector<int> startingPoints = GetRandomStartingPoints();
+	std::vector<double> startingPoints = GetRandomStartingPoints();
 
 	for (int i = 0; i < mClustersAmount; i++) {
 		Cluster cluster = Cluster();
 		cluster.Number = i;
-		//int startingNumber = startingPoints[i];
-		double average = 0;
+		double startingPoint = startingPoints[i];
+		double average = startingPoint;
 		cluster.AverageValue = average;
 		clusters.push_back(cluster);
 	}
@@ -22,8 +22,6 @@ std::vector<Cluster> KMeans::CreateClusers()
 }
 
 std::vector<double> KMeans::GetRandomStartingPoints() {
-
-	//1. Get maximum from mValues double value
 	double max = GetMaxFromValues();
 	RealRandomizer randomizer = RealRandomizer(0, max);
 	std::vector<double> points;
@@ -33,7 +31,7 @@ std::vector<double> KMeans::GetRandomStartingPoints() {
 		if (points.size() > 0) {
 			//check if it's already inside points
 			for (double &point : points) {
-				while (randomStartingPoint == point) {
+				while (IsTwoDoubleEqual(randomStartingPoint,point)) {
 					randomStartingPoint = randomizer.GetEvenRandomNumber();
 				}
 			}
@@ -58,4 +56,24 @@ double KMeans::GetMaxFromValues() {
 	}
 
 	return max;
+}
+
+bool KMeans::IsTwoDoubleEqual(double first, double second) {
+	return !(std::isgreater(first, second) || std::isgreater(second, first));
+}
+
+std::vector<double> KMeans::CountDistances(double point)
+{
+	std::vector<double> distances;
+	std::map<int, double>::iterator it;
+
+	for (it = mValues.begin(); it != mValues.end(); it++)
+	{
+		double value = it->second;
+		double distance = point - value;
+		distance = std::abs(distance);
+		distances.push_back(distance);
+	}
+
+	return distances;
 }

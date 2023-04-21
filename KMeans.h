@@ -22,4 +22,6 @@ public:
 	std::vector<Cluster> CreateClusers();
 	std::vector<double> GetRandomStartingPoints();
 	double GetMaxFromValues();
+	static bool IsTwoDoubleEqual(double first, double second);
+	std::vector<double> CountDistances(double point);
 };
