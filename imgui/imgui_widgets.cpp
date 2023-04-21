@@ -6814,16 +6814,16 @@ int ImGui::PlotEx(ImGuiPlotType plot_type, const char* label, float (*values_get
 
 struct ImGuiPlotArrayGetterData
 {
-    const float* Values;
+    const float* Distances;
     int Stride;
 
-    ImGuiPlotArrayGetterData(const float* values, int stride) { Values = values; Stride = stride; }
+    ImGuiPlotArrayGetterData(const float* values, int stride) { Distances = values; Stride = stride; }
 };
 
 static float Plot_ArrayGetter(void* data, int idx)
 {
     ImGuiPlotArrayGetterData* plot_data = (ImGuiPlotArrayGetterData*)data;
-    const float v = *(const float*)(const void*)((const unsigned char*)plot_data->Values + (size_t)idx * plot_data->Stride);
+    const float v = *(const float*)(const void*)((const unsigned char*)plot_data->Distances + (size_t)idx * plot_data->Stride);
     return v;
 }
 

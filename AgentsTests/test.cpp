@@ -49,7 +49,7 @@ TEST(KMeansTest, CanGetMaxFromValues) {
 
 TEST(KMeansTest, CanRequiredClustersSize) {
 	KMeans kMeans = GetTestKMeans();
-	EXPECT_EQ(amountClusters,kMeans.CreateClusers().size());
+	EXPECT_EQ(amountClusters,kMeans.CreateCentroids().size());
 }
 
 TEST(KMeansTest, CanGetTwoDifferentRandomPoints) {
@@ -72,12 +72,12 @@ TEST(KMeansTest, CanGetTwoDifferentRandomPoints) {
 	}
 }
 
-TEST(KMeansTest, ClustersHaveNotZeroStartingPoints) {
+TEST(KMeansTest, CentroidHaveNotZeroStartingPoints) {
 	KMeans kMeans = GetTestKMeans();
-	std::vector<Cluster> clusters = kMeans.CreateClusers();
+	std::vector<Centroid> centroids = kMeans.CreateCentroids();
 
-	for (Cluster& cluster : clusters) {
-		EXPECT_FALSE(KMeans::IsTwoDoubleEqual(0, cluster.AverageValue));
+	for (Centroid& centroid : centroids) {
+		EXPECT_FALSE(KMeans::IsTwoDoubleEqual(0, centroid.Value));
 	}
 }
 
@@ -91,14 +91,35 @@ TEST(KMeansTest, IsEqualDouble) {
 }
 
 TEST(KMeansTest, CanGetValidDistancesForPoint) {
-	std::map<int,double> testDistanceMap = { { 1,1.0 }, { 2,2.0 }, { 3,3.0 }, { 4,4.0 }, { 5,5.0 } };
-	auto kMeans = KMeans(2, testDistanceMap);
-	std::vector<double> valid = { 0.5, 1.5, 2.5, 3.5, 4.5 };
+	std::map<int,double> testPointsMap = { { 1,1.0 }, { 2,2.0 }, { 3,3.0 }, { 4,4.0 }, { 5,5.0 } };
+	auto kMeans = KMeans(2, testPointsMap);
+	std::map<int, double> valid = { {1,0.5}, {2,1.5}, {3,2.5}, {4,3.5}, {5,4.5} };
 	double point = 0.5;
-	std::vector<double> calculated = kMeans.CountDistances(point);
+	std::map<int,double> calculated = kMeans.CountDistances(point);
+	std::map<int, double>::iterator it; 
 
-	for (size_t i = 0; i < valid.size(); i++) {
-		EXPECT_DOUBLE_EQ(valid[i], calculated[i]);
+	for (it = testPointsMap.begin(); it != testPointsMap.end(); it++) {
+		EXPECT_DOUBLE_EQ(valid[it->first], calculated[it->first]);
 	}
+}
 
+TEST(KMeansTest, CanGetMinCentroid) {
+
+	//arrange
+	std::map<int, double> testPointsMap = { { 1,1.0 }, { 2,2.0 }, { 3,3.0 }, { 4,4.0 }, { 5,5.0 } };
+	auto kMeans = KMeans(2, testPointsMap);
+	int validCentroidIndex = 0;
+	int pointIndexToCheck = 1; // {1, 1.0} distance = 0.5
+	std::vector<Centroid> centroids = kMeans.CreateCentroids();
+	centroids[0].Value = 0.5; // first 
+	centroids[1].Value = 3.5; // second
+
+	//act
+	kMeans.SetCentroids(centroids);
+	kMeans.CountDistances();
+	int centroidIndex = kMeans.GetMinCentroid(pointIndexToCheck);
+
+
+	//assert
+	EXPECT_EQ(validCentroidIndex, centroidIndex);
 }

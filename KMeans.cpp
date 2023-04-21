@@ -2,23 +2,25 @@
 #include "KMeans.h"
 #include "Randomizer.h"
 
-
-
-std::vector<Cluster> KMeans::CreateClusers()
+KMeans::KMeans(int amount, std::map<int, double> values) : mCentroidsAmount(amount), mValues(values) 
 {
-	std::vector<Cluster> clusters = std::vector<Cluster>();
+	 
+};
+
+std::vector<Centroid> KMeans::CreateCentroids()
+{
 	std::vector<double> startingPoints = GetRandomStartingPoints();
 
-	for (int i = 0; i < mClustersAmount; i++) {
-		Cluster cluster = Cluster();
-		cluster.Number = i;
+	for (int i = 0; i < mCentroidsAmount; i++) {
+		Centroid centroid = Centroid();
+		centroid.Number = i;
 		double startingPoint = startingPoints[i];
 		double average = startingPoint;
-		cluster.AverageValue = average;
-		clusters.push_back(cluster);
+		centroid.Value = average;
+		this->mCentroids.push_back(centroid);
 	}
 
-	return clusters;
+	return this->mCentroids;
 }
 
 std::vector<double> KMeans::GetRandomStartingPoints() {
@@ -26,7 +28,7 @@ std::vector<double> KMeans::GetRandomStartingPoints() {
 	RealRandomizer randomizer = RealRandomizer(0, max);
 	std::vector<double> points;
 
-	for (int i = 0; i < this->mClustersAmount; i++) {
+	for (int i = 0; i < this->mCentroidsAmount; i++) {
 		double randomStartingPoint = randomizer.GetEvenRandomNumber();
 		if (points.size() > 0) {
 			//check if it's already inside points
@@ -62,9 +64,9 @@ bool KMeans::IsTwoDoubleEqual(double first, double second) {
 	return !(std::isgreater(first, second) || std::isgreater(second, first));
 }
 
-std::vector<double> KMeans::CountDistances(double point)
+std::map<int,double> KMeans::CountDistances(double point)
 {
-	std::vector<double> distances;
+	std::map<int,double> distances;
 	std::map<int, double>::iterator it;
 
 	for (it = mValues.begin(); it != mValues.end(); it++)
@@ -72,8 +74,67 @@ std::vector<double> KMeans::CountDistances(double point)
 		double value = it->second;
 		double distance = point - value;
 		distance = std::abs(distance);
-		distances.push_back(distance);
+		distances[it->first]= distance;
 	}
 
 	return distances;
 }
+
+void KMeans::ProcessKMeansClusterization() {
+
+	CreateCentroids();
+	CountDistances();
+
+	bool isTheSameAsPrevious = AssignPoints();
+
+	do {
+		CountAverage();
+		CountDistances();
+		isTheSameAsPrevious = AssignPoints();
+	} while (isTheSameAsPrevious);
+	
+}
+
+void KMeans::CountDistances() {
+	for (Centroid& centroid : this->mCentroids) {
+		centroid.Distances = this->CountDistances(centroid.Value);
+	}
+}
+
+bool KMeans::AssignPoints() {
+	std::map<int, double>::iterator it;
+
+	for (it = this->mValues.begin(); it != this->mValues.end(); it++) {
+		int index = this->GetMinCentroid(it->first);
+		Centroid centroid = this->mCentroids[index];
+		centroid.Assigned.push_back(it->first);
+	}
+
+	return this->IsTheSameAsPreviousAssign();
+}
+int KMeans::GetMinCentroid(int pointIndex)
+{
+	int min = 0;
+
+	//it wouldn't be bigger 
+	double minDistance = 100;
+
+	for (Centroid& centroid : this->mCentroids) {
+		if (centroid.Distances[pointIndex] < minDistance) {
+			minDistance = centroid.Distances[pointIndex];
+			min = centroid.Number;
+		}
+	}
+
+	return min;
+}
+
+double KMeans::CountAverage() {
+	return 0;
+}
+bool KMeans::IsTheSameAsPreviousAssign()
+{
+	return false;
+}
+;
+
