@@ -230,7 +230,6 @@ namespace AgentsApp
 		}
 		else {
 			ImGui::Text("Ready to start ..");
-			progress = 0.0f;
 		}
 
 		
