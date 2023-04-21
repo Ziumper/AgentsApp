@@ -2,9 +2,9 @@
 #include "KMeans.h"
 #include "Randomizer.h"
 
-KMeans::KMeans(int amount, std::map<int, double> values) : mCentroidsAmount(amount), mValues(values) 
+KMeans::KMeans(int amount, std::map<int, double> values) : mCentroidsAmount(amount) 
 {
-	 
+	this->mValues = values;
 };
 
 std::vector<Centroid> KMeans::CreateCentroids()

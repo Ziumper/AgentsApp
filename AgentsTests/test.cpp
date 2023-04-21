@@ -31,10 +31,25 @@ TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
 	EXPECT_GT(calculatedMean, rangeBoundDown);
 }
 
-static int amountClusters = 2;
+static int amountOfCentroids = 2;
 static std::map<int, double> map = { {1,0.1},{2,0.2},{3,0.3} ,{4,0.4},{5,0.5} };
 KMeans GetTestKMeans() {
-	return KMeans(amountClusters, map);
+	return KMeans(amountOfCentroids, map);
+}
+
+KMeans GetBasicTestKMeans() {
+	std::map<int, double> testPointsMap = { { 1,1.0 }, { 2,2.0 }, { 3,3.0 }, { 4,4.0 }, { 5,5.0 } };
+	
+	auto kMeans = KMeans(2, testPointsMap);
+
+
+
+	std::vector<Centroid> centroids = kMeans.CreateCentroids();
+	centroids[0].Value = 0.5; // first 
+	centroids[1].Value = 3.5; // second
+
+	kMeans.SetCentroids(centroids);
+	return kMeans;
 }
 
 TEST(KMeansTest, CanGetMaxFromValues) {
@@ -49,7 +64,7 @@ TEST(KMeansTest, CanGetMaxFromValues) {
 
 TEST(KMeansTest, CanRequiredClustersSize) {
 	KMeans kMeans = GetTestKMeans();
-	EXPECT_EQ(amountClusters,kMeans.CreateCentroids().size());
+	EXPECT_EQ(amountOfCentroids,kMeans.CreateCentroids().size());
 }
 
 TEST(KMeansTest, CanGetTwoDifferentRandomPoints) {
@@ -106,16 +121,12 @@ TEST(KMeansTest, CanGetValidDistancesForPoint) {
 TEST(KMeansTest, CanGetMinCentroid) {
 
 	//arrange
-	std::map<int, double> testPointsMap = { { 1,1.0 }, { 2,2.0 }, { 3,3.0 }, { 4,4.0 }, { 5,5.0 } };
-	auto kMeans = KMeans(2, testPointsMap);
 	int validCentroidIndex = 0;
 	int pointIndexToCheck = 1; // {1, 1.0} distance = 0.5
-	std::vector<Centroid> centroids = kMeans.CreateCentroids();
-	centroids[0].Value = 0.5; // first 
-	centroids[1].Value = 3.5; // second
+	auto kMeans = GetBasicTestKMeans();
 
 	//act
-	kMeans.SetCentroids(centroids);
+	
 	kMeans.CountDistances();
 	int centroidIndex = kMeans.GetMinCentroid(pointIndexToCheck);
 
