@@ -234,8 +234,8 @@ namespace AgentsApp
 		ImGui::Text(message.c_str());
 		
 		ImGui::Separator();
-		std::vector<float> trustLevels = monteCarlo.GetTrustLevels();
-		ImGui::PlotHistogram("Agents trust levels histogram", trustLevels.data(), trustLevels.size(), 0, NULL, 0.0f, 1.0f, ImVec2(0.0f,100.0f));
+		//std::vector<float> trustLevels = monteCarlo.GetTrustLevels();
+		//ImGui::PlotHistogram("Agents trust levels histogram", trustLevels.data(), trustLevels.size(), 0, NULL, 0.0f, 1.0f, ImVec2(0.0f,100.0f));
 
 		
 

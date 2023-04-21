@@ -4,6 +4,7 @@
 #include <thread>
 #include <chrono>
 
+
 namespace Rae {
 	std::vector<int> Randomizer::GetEvenDistribute(int amount)
 	{
@@ -150,7 +151,7 @@ namespace Rae {
 				.append(std::to_string(mCurrentCycle.Round))
 				.append(". Average: ").append(std::to_string(average));
 
-			mReportedAverage[agent.Number] = average;
+			mReportedAverage[average] = agent.Number;
 
 			logger->AddLog(message.c_str());
 		}
@@ -391,7 +392,6 @@ namespace Rae {
 		mAgents[mCurrentRecipient.Number].CopyValues(mCurrentRecipient);
 		int indexOfRecipient = mCurrentRecipient.Number + 1;
 		mCurrentRecipient = mAgents[indexOfRecipient];
-
 	}
 
 	/// <summary>

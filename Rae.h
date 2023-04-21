@@ -128,7 +128,7 @@ namespace Rae
 		/// <summary>
 		/// Average Ri(t) for agent i
 		/// </summary>
-		std::map<int, double> mReportedAverage;
+		std::map<double, int> mReportedAverage;
 		bool mIsRunning{ false };
 		bool mIsInitalizing{ false };
 		void SetServiceAvailiabilityForSupplier();
