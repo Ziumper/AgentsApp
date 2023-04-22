@@ -7,7 +7,7 @@
 
 class Centroid {
 public:
-	int Number;
+	int Number{ 0 };
 	std::map<int, double> Distances;
 	double Value;
 	std::vector<int> Assigned;
@@ -19,7 +19,7 @@ private:
 	int mCentroidsAmount;
 	std::map<int, double> mValues;
 	std::vector<Centroid> mCentroids;
-	std::map<int, int> mAssignTemp;
+	std::map<int, std::vector<int>> mAssignTemp;
 public:
 	KMeans(int amount, std::map<int, double> values);
 	void SetCentroids(std::vector<Centroid> centroids) { this->mCentroids = centroids; };
@@ -34,6 +34,6 @@ public:
 	void CountDistances();
 	bool AssignPoints();
 	int GetMinCentroid(int pointIndex);
-	double CountAverage();
+	void CountAverage();
 	bool IsTheSameAsPreviousAssign();
 };

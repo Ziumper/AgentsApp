@@ -9,6 +9,8 @@ KMeans::KMeans(int amount, std::map<int, double> values) : mCentroidsAmount(amou
 
 std::vector<Centroid> KMeans::CreateCentroids()
 {
+	if (mCentroids.size() == mCentroidsAmount) return mCentroids;
+
 	std::vector<double> startingPoints = GetRandomStartingPoints();
 
 	for (int i = 0; i < mCentroidsAmount; i++) {
@@ -87,13 +89,13 @@ void KMeans::ProcessKMeansClusterization() {
 	CreateCentroids();
 	CountDistances();
 
-	bool isTheSameAsPrevious = AssignPoints();
+	bool isNotTheSameAsPrevious = !AssignPoints();
 
 	do {
 		CountAverage();
 		CountDistances();
-		isTheSameAsPrevious = AssignPoints();
-	} while (isTheSameAsPrevious);
+		isNotTheSameAsPrevious = !AssignPoints();
+	} while (isNotTheSameAsPrevious);
 	
 }
 
@@ -106,13 +108,30 @@ void KMeans::CountDistances() {
 bool KMeans::AssignPoints() {
 	std::map<int, double>::iterator it;
 
-	for (it = this->mValues.begin(); it != this->mValues.end(); it++) {
-		int index = this->GetMinCentroid(it->first);
-		Centroid centroid = this->mCentroids[index];
-		centroid.Assigned.push_back(it->first);
+	//cleanup the centroid assings first
+	for (Centroid& centroid : mCentroids) {
+		centroid.Assigned.clear();
 	}
 
-	return this->IsTheSameAsPreviousAssign();
+	//assign new ones
+	for (it = this->mValues.begin(); it != this->mValues.end(); it++) {
+		
+		int index = this->GetMinCentroid(it->first);
+		this->mCentroids[index].Assigned.push_back(it->first);
+	}
+
+	bool comparsion = this->IsTheSameAsPreviousAssign();
+	
+	std::vector<Centroid>::iterator itC;
+
+	//reset temp
+	mAssignTemp.clear();
+	
+	for (itC = this->mCentroids.begin(); itC != this->mCentroids.end(); itC++) {
+		mAssignTemp[itC->Number] = itC->Assigned;
+	}
+
+	return comparsion;
 }
 int KMeans::GetMinCentroid(int pointIndex)
 {
@@ -131,12 +150,32 @@ int KMeans::GetMinCentroid(int pointIndex)
 	return min;
 }
 
-double KMeans::CountAverage() {
-	return 0;
+void KMeans::CountAverage() {
+
+	for (Centroid& centroid : mCentroids)
+	{
+		double average = 0;
+		double sum = 0;
+
+		int counter = 0;
+
+		for (int& assigned : centroid.Assigned) {
+			sum = sum + mValues[assigned];
+			counter++;
+		}
+
+		centroid.Value = sum / counter;
+	}
 }
 bool KMeans::IsTheSameAsPreviousAssign()
 {
-	return false;
+	for (Centroid& centroid : mCentroids) {
+		if (centroid.Assigned.size() > mAssignTemp[centroid.Number].size()) return false;
+		bool isEqual = std::equal(centroid.Assigned.begin(), centroid.Assigned.end(), mAssignTemp[centroid.Number].begin());
+		if (isEqual == false) return false;
+	}
+
+	return true;
 }
 ;
 

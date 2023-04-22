@@ -42,14 +42,33 @@ KMeans GetBasicTestKMeans() {
 	
 	auto kMeans = KMeans(2, testPointsMap);
 
-
-
 	std::vector<Centroid> centroids = kMeans.CreateCentroids();
 	centroids[0].Value = 0.5; // first 
 	centroids[1].Value = 3.5; // second
 
 	kMeans.SetCentroids(centroids);
 	return kMeans;
+}
+
+void TestKMeansSeperated(KMeans kMeans) {
+	kMeans.ProcessKMeansClusterization();
+
+	std::vector<Centroid> centroids = kMeans.GetCentroids();
+
+	for (size_t i = 0; i < centroids.size(); i++) {
+		for (size_t j = 0; j < centroids.size(); j++)
+			if (i != j) {
+				std::vector<int> assignedSource = centroids[i].Assigned;
+				std::vector<int> assingedSourceTwo = centroids[j].Assigned;
+
+				for (int& assinged : assignedSource) {
+					for (int& secondAssigned : assingedSourceTwo) {
+						bool notEqual = assinged != secondAssigned;
+						EXPECT_TRUE(notEqual);
+					}
+				}
+			}
+	}
 }
 
 TEST(KMeansTest, CanGetMaxFromValues) {
@@ -138,4 +157,88 @@ TEST(KMeansTest, CanGetMinCentroid) {
 
 	//assert
 	EXPECT_EQ(validCentroidIndex, centroidIndex);
+}
+
+
+TEST(KMeansTest, CanAssignPointsCorrectly) {
+	//arrange
+	KMeans kMeans = GetBasicTestKMeans();
+	std::vector<int> firstPointsGroup = { 1,2 };
+	std::vector<int> secondPointsGroup = { 3,4,5 };
+
+	kMeans.CountDistances();
+	kMeans.AssignPoints();
+
+	std::vector<Centroid> centroids = kMeans.GetCentroids();
+	std::vector<int> fromCentroid1 = centroids[0].Assigned;
+	std::vector<int> fromCentroid2 = centroids[1].Assigned;
+	
+	bool checkFirst = std::equal(fromCentroid1.begin(), fromCentroid1.end(), firstPointsGroup.begin());
+	bool checkSecond = std::equal(fromCentroid2.begin(), fromCentroid2.begin(), secondPointsGroup.begin());
+
+	EXPECT_TRUE(checkFirst);
+	EXPECT_TRUE(checkSecond);
+}
+
+TEST(KMeansTest, CountAverageCorrectly) {
+	KMeans kMeans = GetBasicTestKMeans();
+
+	kMeans.CountDistances();
+	kMeans.AssignPoints();
+
+	kMeans.CountAverage();
+
+	std::vector<Centroid> centroids = kMeans.GetCentroids();
+
+	EXPECT_DOUBLE_EQ(1.5,centroids[0].Value);
+	EXPECT_DOUBLE_EQ(4,centroids[1].Value);
+}
+
+TEST(KMeansTest, CanProcessClusterizationCorrectlyForBasicTest) {
+	KMeans kMeans = GetBasicTestKMeans();
+
+	TestKMeansSeperated(kMeans);
+}
+
+TEST(KMeansTest, IsAssignTheSameAsPreviousOne) {
+	KMeans kMeans = GetBasicTestKMeans();
+
+	kMeans.CountDistances();
+	kMeans.AssignPoints();
+	kMeans.CountAverage();
+	bool result = kMeans.AssignPoints();
+
+	EXPECT_TRUE(result);
+}
+
+TEST(KMeansTest, IsAssignTempTheSameSizeAsCentroidsAssign) {
+	KMeans kMeans = GetBasicTestKMeans();
+
+	kMeans.CountDistances();
+	kMeans.AssignPoints();
+	std::vector<Centroid> firstAssignCentroids = kMeans.GetCentroids();
+
+	kMeans.CountAverage();
+	kMeans.AssignPoints();
+
+	std::vector<Centroid> secondAssignedCentroids = kMeans.GetCentroids();
+
+	EXPECT_EQ(firstAssignCentroids[0].Assigned.size(),secondAssignedCentroids[0].Assigned.size());
+	EXPECT_EQ(firstAssignCentroids[1].Assigned.size(), secondAssignedCentroids[1].Assigned.size());
+}
+
+TEST(KMeansTest, CanDo1000PointsIntoTwoCentroidsGroup) {
+	//1. 1000 thousnd of random points in range [0,1]
+	std::map<int, double> map;
+	RealRandomizer randomizer = RealRandomizer(0,1);
+
+	for (int i = 0; i < 1000; i++) {
+		map[i] = randomizer.GetEvenRandomNumber();
+	}
+
+	//2. Create KMeans object
+	KMeans kMeans = KMeans(2, map);
+
+	//3. Test 
+	TestKMeansSeperated(kMeans);
 }
