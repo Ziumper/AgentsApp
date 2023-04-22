@@ -147,6 +147,7 @@ namespace Rae
 		int kMax{ 150 };
 		double expoA{ 0.5 };
 		double expoG{ 0.5 };
+		bool Done{ false };
 		double beginTrustMesaure{ 1 };
 		bool boostMode{ false };
 		RaeLogger* logger;
@@ -157,6 +158,7 @@ namespace Rae
 		int CurrentRecipientNumberInCycle() { return mCurrentRecipient.Number+1; }
 		int CurrentCycleNumber() { return mCurrentCycle.Round; }
 		bool IsWorking(){ return mIsRunning || mIsInitalizing; }
+		void MonteCarlo::GenerateReport();
 		std::vector<float> GetTrustLevels();
 	};
 

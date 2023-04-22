@@ -73,6 +73,7 @@ namespace Rae {
 		mCycleFactory = CycleFactory(logger);
 
 		MonteCarlo::mIsInitalizing = true;
+		Done = false;
 	}
 
 	void MonteCarlo::Update()
@@ -276,6 +277,9 @@ namespace Rae {
 	
 		mIsRunning = false;
 		logger->AddLog("Monte Carlo simulation is done");
+
+		GenerateReport();
+		Done = true;
 	}
 
 	void MonteCarlo::PreserveCycle() {
@@ -523,5 +527,10 @@ namespace Rae {
 		return trust;
 	}
 
+
+	void MonteCarlo::GenerateReport() {
+		logger->AddLog("Generating report data");
+
+	}
 }
 
