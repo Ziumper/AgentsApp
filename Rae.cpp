@@ -327,6 +327,9 @@ namespace Rae {
 			agent.ResetForNextCycle();
 		}
 
+		mReportedAverage.clear();
+		mReportedSumForInteraction.clear();
+
 		mCurrentRecipient = mAgents[0];
 	}
 
