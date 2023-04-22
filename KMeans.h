@@ -29,12 +29,15 @@ public:
 	std::vector<Centroid> CreateCentroids();
 	std::vector<double> GetRandomStartingPoints();
 	double GetMaxFromValues();
+	int GetMaxIndexFromValues();
 	static bool IsTwoDoubleEqual(double first, double second);
 	std::map<int,double> CountDistances(double point);
 	void ProcessKMeansClusterization();
+	void AssignToTemp();
 	void CountDistances();
-	bool AssignPoints();
+	void AssignPoints();
 	int GetMinCentroid(int pointIndex);
 	void CountAverage();
 	bool IsTheSameAsPreviousAssign();
+	bool IsAnyCentroidEmpty();
 };

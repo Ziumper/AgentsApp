@@ -205,10 +205,12 @@ TEST(KMeansTest, IsAssignTheSameAsPreviousOne) {
 
 	kMeans.CountDistances();
 	kMeans.AssignPoints();
+	kMeans.AssignToTemp();
 	kMeans.CountAverage();
-	bool result = kMeans.AssignPoints();
+	kMeans.AssignPoints();
+	kMeans.AssignToTemp();
 
-	EXPECT_TRUE(result);
+	EXPECT_TRUE(kMeans.IsTheSameAsPreviousAssign());
 }
 
 TEST(KMeansTest, IsAssignTempTheSameSizeAsCentroidsAssign) {
@@ -241,4 +243,37 @@ TEST(KMeansTest, CanDo1000PointsIntoTwoCentroidsGroup) {
 
 	//3. Test 
 	TestKMeansSeperated(kMeans);
+}
+
+TEST(KMeansTest, CanGoWithEmptyCentroidAssing) {
+	std::map<int, double> map = { {3,3}, {4,4}, {5,5} };
+	KMeans kMeans = KMeans(2, map);
+
+	std::vector<Centroid> centroids = kMeans.CreateCentroids();
+
+	centroids[0].Value = 1;
+	centroids[1].Value = 3;
+
+	kMeans.SetCentroids(centroids);
+
+	kMeans.ProcessKMeansClusterization();
+
+	centroids = kMeans.GetCentroids();
+
+	bool notEmpty = centroids[0].Assigned.size() != 0;
+	EXPECT_TRUE(notEmpty);
+
+	notEmpty = centroids[1].Assigned.size() != 0;
+	EXPECT_TRUE(notEmpty);
+
+}
+
+TEST(KMeansTest, IsAnyCentroidEmtpy) {
+	std::map<int, double> map = { {3,3}, {4,4}, {5,5} };
+	KMeans kMeans = KMeans(2, map);
+	
+	std::vector<Centroid> centroids = { Centroid(), Centroid() };
+	kMeans.SetCentroids(centroids);
+	
+	EXPECT_TRUE(kMeans.IsAnyCentroidEmpty());
 }

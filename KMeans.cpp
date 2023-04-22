@@ -9,7 +9,7 @@ KMeans::KMeans(int amount, std::map<int, double> values) : mCentroidsAmount(amou
 
 std::vector<Centroid> KMeans::CreateCentroids()
 {
-	if (mCentroids.size() == mCentroidsAmount) return mCentroids;
+	mCentroids.clear();
 
 	std::vector<double> startingPoints = GetRandomStartingPoints();
 
@@ -26,12 +26,13 @@ std::vector<Centroid> KMeans::CreateCentroids()
 }
 
 std::vector<double> KMeans::GetRandomStartingPoints() {
-	double max = GetMaxFromValues();
-	RealRandomizer randomizer = RealRandomizer(0, max);
+	int max = GetMaxIndexFromValues();
+	Randomizer randomizer = Randomizer(mValues[mValues.begin()->first], max);
 	std::vector<double> points;
 
 	for (int i = 0; i < this->mCentroidsAmount; i++) {
-		double randomStartingPoint = randomizer.GetEvenRandomNumber();
+		int indexRandom = randomizer.GetEvenRandomNumber();
+		double randomStartingPoint = mValues[indexRandom];
 		if (points.size() > 0) {
 			//check if it's already inside points
 			for (double &point : points) {
@@ -64,6 +65,22 @@ double KMeans::GetMaxFromValues() {
 	return max;
 }
 
+int KMeans::GetMaxIndexFromValues() {
+
+	int max = 0;
+
+	std::map<int, double>::iterator it;
+
+	for (it = mValues.begin(); it != this->mValues.end(); it++) {
+		double checkValue = it->first;
+		if (checkValue > max) {
+			max = checkValue;
+		}
+	}
+
+	return max;
+}
+
 bool KMeans::IsTwoDoubleEqual(double first, double second) {
 	return !(std::isgreater(first, second) || std::isgreater(second, first));
 }
@@ -86,17 +103,35 @@ std::map<int,double> KMeans::CountDistances(double point)
 
 void KMeans::ProcessKMeansClusterization() {
 
-	CreateCentroids();
-	CountDistances();
+	bool isNotTheSameAsPrevious = false;
+	do
+	{
+		CreateCentroids();
+		CountDistances();
+		AssignPoints();
+	} while (this->IsAnyCentroidEmpty());
 
-	bool isNotTheSameAsPrevious = !AssignPoints();
-
-	do {
+	do 
+	{
 		CountAverage();
 		CountDistances();
-		isNotTheSameAsPrevious = !AssignPoints();
+		AssignPoints();
+
+		isNotTheSameAsPrevious = !this->IsTheSameAsPreviousAssign();
+		AssignToTemp();
 	} while (isNotTheSameAsPrevious);
 	
+}
+
+void KMeans::AssignToTemp() {
+	std::vector<Centroid>::iterator itC;
+
+	//reset temp
+	mAssignTemp.clear();
+
+	for (itC = this->mCentroids.begin(); itC != this->mCentroids.end(); itC++) {
+		mAssignTemp[itC->Number] = itC->Assigned;
+	}
 }
 
 void KMeans::CountDistances() {
@@ -105,7 +140,7 @@ void KMeans::CountDistances() {
 	}
 }
 
-bool KMeans::AssignPoints() {
+void KMeans::AssignPoints() {
 	std::map<int, double>::iterator it;
 
 	//cleanup the centroid assings first
@@ -115,24 +150,12 @@ bool KMeans::AssignPoints() {
 
 	//assign new ones
 	for (it = this->mValues.begin(); it != this->mValues.end(); it++) {
-		
+
 		int index = this->GetMinCentroid(it->first);
 		this->mCentroids[index].Assigned.push_back(it->first);
 	}
-
-	bool comparsion = this->IsTheSameAsPreviousAssign();
-	
-	std::vector<Centroid>::iterator itC;
-
-	//reset temp
-	mAssignTemp.clear();
-	
-	for (itC = this->mCentroids.begin(); itC != this->mCentroids.end(); itC++) {
-		mAssignTemp[itC->Number] = itC->Assigned;
-	}
-
-	return comparsion;
 }
+
 int KMeans::GetMinCentroid(int pointIndex)
 {
 	int min = 0;
@@ -177,6 +200,16 @@ bool KMeans::IsTheSameAsPreviousAssign()
 
 	return true;
 }
+bool KMeans::IsAnyCentroidEmpty()
+{
+	if (this->mCentroids.size() == 0) return true;
+
+	for (Centroid& centroid : this->mCentroids) {
+		if (centroid.Assigned.size() == 0) return true;
+	}
+
+	return false;
+}
 ;
 
 bool Centroid::IsAssigned(int number)
@@ -189,3 +222,4 @@ bool Centroid::IsAssigned(int number)
 
 	return false;
 }
+

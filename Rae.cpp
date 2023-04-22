@@ -19,6 +19,9 @@ namespace Rae {
 		this->serviceReception = agent.serviceReception;
 		this->suppliersNumbers = agent.suppliersNumbers;
 		this->suppliersAmount = agent.suppliersAmount;
+		this->HonestSuppilersCount = agent.HonestSuppilersCount;
+		this->StrategicSuppliersCount = agent.StrategicSuppliersCount;
+		this->AviliabilitySupplierSum = agent.AviliabilitySupplierSum;
 	}
 
 	double Agent::CalculateRaeIT()
@@ -159,7 +162,53 @@ namespace Rae {
 
 			agent.trust = averageLow;
 		}
+
+		this->mCycleTempStategicTraectory = 0;
+		this->mCycleTempHonestTraectory = 0;
+
+		double strategicTrustSum = 0;
+		double honestTrustSum = 0;
+
+		logger->AddLog("Calculationg trajectory for cycles");
+		for (Agent& agent : mAgents) {
+			if (agent.isStrategicAgent) {
+				strategicTrustSum = strategicTrustSum + agent.trust;
+				continue;
+			}
+			
+			//normal honest one
+			honestTrustSum = honestTrustSum + agent.trust;
+		}
+
+		int honestAgentsAmount = agentsAmount - strategicAgentsAmount;
+		this->mCycleTempHonestTraectory = honestTrustSum / honestAgentsAmount;
+		this->mCycleTempStategicTraectory = strategicTrustSum / strategicAgentsAmount;
+
+		logger->AddLog("Calculating netto outflow");
+		this->mCycleTempOutflow = 0;
+		double honestNettoSum = 0; //i in Honest Sum of suppliers availiability 
+		double strategicNettoSum = 0; //i in Strategic Sum of suppliers availiability 
+		int strategicCountNetto = 0; //amount of suppilers with honest 
+		int honestCountNetto = 0;//amount of suppliers with stategic 
+		
+		for (Agent& agent : mAgents) {
+			if (agent.isStrategicAgent) {
+				strategicNettoSum = strategicNettoSum + agent.AviliabilitySupplierSum;
+				strategicCountNetto = strategicCountNetto + agent.HonestSuppilersCount;
+				continue;
+			}
+
+			//normal honest one
+			honestNettoSum = honestNettoSum + agent.AviliabilitySupplierSum;
+			honestCountNetto = honestCountNetto + agent.StrategicSuppliersCount;
+		}
+
+		double calculationLeft = honestNettoSum / honestCountNetto;
+		double calculationRight = strategicNettoSum / strategicCountNetto;
+
+		this->mCycleTempOutflow = calculationLeft - calculationRight;
 	}
+
 
 	
 	void MonteCarlo::UpdateInteraction()
@@ -168,6 +217,7 @@ namespace Rae {
 		SetServiceAvailiabilityForSupplier();
 
 		//TODO calculate some policy. // it's random so far
+		//question1 should suppiler be redundant?
 		RealRandomizer randomizer = RealRandomizer(0, 1);
 
 		/// <summary>
@@ -180,6 +230,13 @@ namespace Rae {
 		/// </summary> 
 		double suppilerPolicy = randomizer.GetEvenRandomNumber();
 
+		//calculation for netto outflow
+		mCurrentRecipient.AviliabilitySupplierSum = mCurrentRecipient.AviliabilitySupplierSum + mCurrentSupplier.serviceAvailiability;
+
+		if (mCurrentSupplier.isStrategicAgent)
+			mCurrentRecipient.StrategicSuppliersCount = mCurrentRecipient.StrategicSuppliersCount + 1;
+		else mCurrentRecipient.HonestSuppilersCount = mCurrentRecipient.HonestSuppilersCount + 1;
+			
 		mReportedSumForInteraction[mCurrentRecipient.Number] += mCurrentRecipient.CalculateRaeIT();
 
 		LogInteraction();
@@ -213,13 +270,19 @@ namespace Rae {
 		//preserve
 		bool isLast = this->mCurrentCycle.Round == this->mCycles.size()-1;
 		if (isLast) {
-			mCycles[this->mCurrentCycle.Round].SetAgents(mAgents);
+			PreserveCycle();
 			//reset current cycle round
-			mCurrentCycle = Cycle();
 		}
 	
 		mIsRunning = false;
 		logger->AddLog("Monte Carlo simulation is done");
+	}
+
+	void MonteCarlo::PreserveCycle() {
+		mCycles[this->mCurrentCycle.Round].SetAgents(mAgents);
+		mCycles[this->mCurrentCycle.Round].HonestTraectory = this->mCycleTempHonestTraectory;
+		mCycles[this->mCurrentCycle.Round].NetOutflow = this->mCycleTempOutflow;
+		mCycles[this->mCurrentCycle.Round].StrategicTraectory = this->mCycleTempStategicTraectory;
 	}
 
 	void MonteCarlo::Interact()
@@ -382,9 +445,7 @@ namespace Rae {
 		//start moving to next one
 		logger->AddLog("Current cycle done: ", mCurrentCycle.Round);
 
-		//preserve agents in done as copy saving trust levels for REPORTING in csv/pdf files
-		mCycles[mCurrentCycle.Round].SetAgents(mAgents);
-
+		PreserveCycle();
 		//get next cycle
 		int next = mCurrentCycle.Round + 1;
 		Cycle nextCycle = mCycles[next];
@@ -461,7 +522,6 @@ namespace Rae {
 
 		return trust;
 	}
-
 
 }
 

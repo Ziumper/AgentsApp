@@ -26,6 +26,7 @@ namespace Rae
 		virtual ~RaeLogger() {};
 	};
 
+
 	class Agent {
 	public:
 		int Number{ 0 };
@@ -35,11 +36,17 @@ namespace Rae
 		bool isStrategicAgent{ false };
 		bool wasRecipient{ false };
 		int suppliersAmount{ 0 };
+		int HonestSuppilersCount{ 0 };
+		int StrategicSuppliersCount{ 0 };
+		double AviliabilitySupplierSum{ 0 };
 		std::vector<int> suppliersNumbers;
 		void ResetForNextCycle() {
 			suppliersAmount = 0; 
 			serviceReception = 0;
 			serviceAvailiability = 0;
+			HonestSuppilersCount = 0;
+			StrategicSuppliersCount = 0;
+			AviliabilitySupplierSum = 0;
 		}
 
 		void CopyValues(Agent agent);
@@ -54,6 +61,9 @@ namespace Rae
 		Cycle() : Round(0) {};
 		void SetAgents(std::vector<Agent> agents) { mAgents = agents; };
 		std::vector<Agent> GetAgents() { return mAgents; }
+		double StrategicTraectory{ 0 };
+		double HonestTraectory{ 0 };
+		double NetOutflow{ 0 };
 	};
 
 	class AgentsFactory {
@@ -94,6 +104,9 @@ namespace Rae
 		Agent mCurrentRecipient;
 		Agent mCurrentSupplier;
 		int mInteractionIndex{ 0 };
+		double mCycleTempHonestTraectory{ 0 };
+		double mCycleTempStategicTraectory{ 0 };
+		double mCycleTempOutflow{ 0 };
 		std::vector<Agent> mAgents;
 		std::vector<Cycle> mCycles;
 		std::vector<Agent> mSuppliers;
@@ -123,6 +136,7 @@ namespace Rae
 		void UpdateInteraction();
 		void ReportAgents();
 		void ApplyNewTrustLevels();
+		void PreserveCycle();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
 	public:
