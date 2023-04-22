@@ -139,7 +139,7 @@ namespace Rae
 		void PreserveCycle();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
-		bool mGeneratingReportDone;
+		bool mGeneratingReportDone{ false };
 	public:
 		int cyclesAmount{ 3 };
 		int agentsAmount{ 1000 };
@@ -150,7 +150,17 @@ namespace Rae
 		double expoG{ 0.5 };
 		bool Done{ false };
 		double beginTrustMesaure{ 1 };
-		bool boostMode{ false };
+		bool boostMode{ true };
+
+		/// <summary>
+		/// Reporing
+		/// </summary>
+		std::vector<float> SAgentTraectoryAvg;
+		std::vector<float> HAgentTraectoryAvg;
+		std::vector<float> NettoOutflow;
+		std::vector<float> FinalTrust;
+
+
 		RaeLogger* logger;
 		GoodWill goodWill{ GoodWill() };
 		MonteCarlo(RaeLogger* logger);

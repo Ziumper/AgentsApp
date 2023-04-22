@@ -68,6 +68,7 @@ namespace Rae {
 		mCycles.clear();
 		mReportedAverage.clear();
 		mReportedSumForInteraction.clear();
+		mGeneratingReportDone = false;
 
 		mAgentsFactory = AgentsFactory(beginTrustMesaure, strategicAgentsAmount, logger);
 		mCycleFactory = CycleFactory(logger);
@@ -279,10 +280,11 @@ namespace Rae {
 		logger->AddLog("Monte Carlo simulation is done");
 		if (mGeneratingReportDone == false) { 
 			GenerateReport(); 
+			Done = true;
 			return;
 		}
 
-		Done = true;
+		
 	}
 
 	void MonteCarlo::PreserveCycle() {
@@ -534,10 +536,28 @@ namespace Rae {
 	void MonteCarlo::GenerateReport() {
 		logger->AddLog("Generating report data");
 
+		SAgentTraectoryAvg.clear();
+		HAgentTraectoryAvg.clear();
+		NettoOutflow.clear();
+		FinalTrust.clear();
 
+		//std::vector<float> SAgentTraectoryAvg;
+		//std::vector<float> HAgentTraectoryAvg;
+		//std::vector<float> NettoOutflow;
+		//std::vector<float> FinalTrust;
 
+		for (Cycle& cycle : mCycles) {
+			SAgentTraectoryAvg.push_back(cycle.StrategicTraectory);
+			HAgentTraectoryAvg.push_back(cycle.HonestTraectory);
+			NettoOutflow.push_back(cycle.NetOutflow);
+		}
+
+		for (Agent& agent : mAgents) {
+			FinalTrust.push_back(agent.trust);
+		}
 
 		mGeneratingReportDone = true;
+		logger->AddLog("Generating report data is done");
 	}
 }
 

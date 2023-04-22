@@ -171,7 +171,7 @@ namespace AgentsApp
 		ShowRtbsmWindow();
 
 	
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 	}
 
 	void ShowRtbsmWindow()
@@ -202,10 +202,20 @@ namespace AgentsApp
 		ImGui::Checkbox("Logging On/Off", &logger.Enabled);
 
 		ImGui::SeparatorText("Actions");
-		bool clicked = ImGui::Button("Start");
-		if (clicked) {
-			monteCarlo.Start();
+
+		if (monteCarlo.Done) {
+			bool clicked = ImGui::Button("Start Again");
+			if (clicked) {
+				monteCarlo.Start();
+			}
 		}
+		else {
+			bool clicked = ImGui::Button("Start");
+			if (clicked) {
+				monteCarlo.Start();
+			}
+		}
+		
 
 		monteCarlo.Update();
 
@@ -233,9 +243,16 @@ namespace AgentsApp
 		message.append(std::to_string(monteCarlo.CurrentCycleNumber()));
 		ImGui::Text(message.c_str());
 		
-		ImGui::Separator();
+		if (monteCarlo.Done) {
+			static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
+			ImGui::PlotLines("Vs(t) Traectory ", &monteCarlo.SAgentTraectoryAvg[0], monteCarlo.cyclesAmount, 0, NULL, 0, 1.0f, ImVec2(0, 80));
+			ImGui::PlotLines("Vh(t) Traectory ", &monteCarlo.HAgentTraectoryAvg[0], monteCarlo.cyclesAmount, 0, NULL, 0, 1.0f, ImVec2(0, 80));
+			ImGui::PlotLines("Netto Outflow", &monteCarlo.NettoOutflow[0], monteCarlo.cyclesAmount, 0, NULL, -1.0f, 1.0f, ImVec2(0, 80));
+			ImGui::PlotLines("Final Trust", &monteCarlo.FinalTrust[0], monteCarlo.agentsAmount, 0, NULL, 0, 1.0f, ImVec2(0, 80));
+		}
+
 		//std::vector<float> trustLevels = monteCarlo.GetTrustLevels();
-		//ImGui::PlotHistogram("Agents trust levels histogram", trustLevels.data(), trustLevels.size(), 0, NULL, 0.0f, 1.0f, ImVec2(0.0f,100.0f));
+		
 
 		
 
