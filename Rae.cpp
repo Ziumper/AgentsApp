@@ -277,8 +277,11 @@ namespace Rae {
 	
 		mIsRunning = false;
 		logger->AddLog("Monte Carlo simulation is done");
+		if (mGeneratingReportDone == false) { 
+			GenerateReport(); 
+			return;
+		}
 
-		GenerateReport();
 		Done = true;
 	}
 
@@ -531,6 +534,10 @@ namespace Rae {
 	void MonteCarlo::GenerateReport() {
 		logger->AddLog("Generating report data");
 
+
+
+
+		mGeneratingReportDone = true;
 	}
 }
 

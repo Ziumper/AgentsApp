@@ -139,6 +139,7 @@ namespace Rae
 		void PreserveCycle();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
+		bool mGeneratingReportDone;
 	public:
 		int cyclesAmount{ 3 };
 		int agentsAmount{ 1000 };
@@ -158,7 +159,7 @@ namespace Rae
 		int CurrentRecipientNumberInCycle() { return mCurrentRecipient.Number+1; }
 		int CurrentCycleNumber() { return mCurrentCycle.Round; }
 		bool IsWorking(){ return mIsRunning || mIsInitalizing; }
-		void MonteCarlo::GenerateReport();
+		void GenerateReport();
 		std::vector<float> GetTrustLevels();
 	};
 
