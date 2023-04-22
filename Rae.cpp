@@ -5,6 +5,7 @@
 #include <chrono>
 #include <algorithm>
 #include "Randomizer.h"
+#include "KMeans.h"
 
 
 namespace Rae {
@@ -99,6 +100,67 @@ namespace Rae {
 		}
 	}
 
+	void MonteCarlo::ApplyNewTrustLevels() {
+		//clusterization
+		logger->AddLog("Starting clusterization");
+		KMeans kMeans = KMeans(2, this->mReportedAverage);
+		kMeans.ProcessKMeansClusterization();
+
+		std::vector<Centroid> centroids = kMeans.GetCentroids();
+
+		Centroid high;
+		Centroid low;
+
+		if (centroids[0].Value > centroids[1].Value) {
+			high = centroids[0];
+			low = centroids[1];
+		}
+		else {
+			high = centroids[1];
+			low = centroids[0];
+		}
+
+		//apply trust levels V(i +1) 
+		logger->AddLog("Appling trust levels from RAE to agents for next cycle");
+		//sum 1
+
+		//Noirmalization process
+		//average low caluclations
+		double sum = 0;
+		int lowCount = (int)low.Assigned.size();
+		for (int& assigned : low.Assigned) {
+			double assignedReportedAverage = mReportedAverage[assigned];
+			sum = sum + assignedReportedAverage;
+		}
+
+		double averageLow = sum / lowCount;
+
+		//average high calculations
+		sum = 0;
+		int highCount = (int)high.Assigned.size();
+		for (int& assigned : high.Assigned) {
+			double assignedReportedAverage = mReportedAverage[assigned];
+			sum = sum + assignedReportedAverage;
+		}
+
+		double averageHigh = sum / lowCount;
+
+		//nromalization for each of agents gets always the average value of reported average 
+		for (Agent& agent : mAgents) {
+			//find if it's in low or high
+			bool isHigh = false;
+
+			isHigh = high.IsAssigned(agent.Number);
+
+			if (isHigh) {
+				agent.trust = averageLow / averageHigh;
+				continue;
+			}
+
+			agent.trust = averageLow;
+		}
+	}
+
 	
 	void MonteCarlo::UpdateInteraction()
 	{
@@ -137,15 +199,25 @@ namespace Rae {
 		if (shouldUpdateAgent) return;
 
 		ReportAgents();
-		
-		//here the current cycle is done let's check if it's last one
+		ApplyNewTrustLevels();
+
+		//here the current cycle is done let's check if it's not last one
 		bool shouldSwitchToNextCycle = mCurrentCycle.Round < cyclesAmount - 1;
 		if (shouldSwitchToNextCycle) {
 			MoveToNextCycle();
 			return;
 		}
 
-		//here we are done
+		//here we are done so
+		//preserve last cycle for reporting and reset cycle current number
+		//preserve
+		bool isLast = this->mCurrentCycle.Round == this->mCycles.size()-1;
+		if (isLast) {
+			mCycles[this->mCurrentCycle.Round].SetAgents(mAgents);
+			//reset current cycle round
+			mCurrentCycle = Cycle();
+		}
+	
 		mIsRunning = false;
 		logger->AddLog("Monte Carlo simulation is done");
 	}
@@ -306,12 +378,11 @@ namespace Rae {
 
 	void MonteCarlo::MoveToNextCycle()
 	{
-		//TODO do reporting
-		logger->AddLog("Starting reporting to RAE");
-
-		//move to next one
+		
+		//start moving to next one
 		logger->AddLog("Current cycle done: ", mCurrentCycle.Round);
-		//preserve agents in done as copy
+
+		//preserve agents in done as copy saving trust levels for REPORTING in csv/pdf files
 		mCycles[mCurrentCycle.Round].SetAgents(mAgents);
 
 		//get next cycle
@@ -327,9 +398,10 @@ namespace Rae {
 			agent.ResetForNextCycle();
 		}
 
+		
+
 		mReportedAverage.clear();
 		mReportedSumForInteraction.clear();
-
 		mCurrentRecipient = mAgents[0];
 	}
 

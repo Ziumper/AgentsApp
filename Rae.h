@@ -105,7 +105,7 @@ namespace Rae
 		/// <summary>
 		/// Average Ri(t) for agent i
 		/// </summary>
-		std::unordered_map <int,double> mReportedAverage;
+		std::map <int,double> mReportedAverage;
 		bool mIsRunning{ false };
 		bool mIsInitalizing{ false };
 		void SetServiceAvailiabilityForSupplier();
@@ -122,7 +122,7 @@ namespace Rae
 		void CreateAgent();
 		void UpdateInteraction();
 		void ReportAgents();
-		 
+		void ApplyNewTrustLevels();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
 	public:

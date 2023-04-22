@@ -179,3 +179,13 @@ bool KMeans::IsTheSameAsPreviousAssign()
 }
 ;
 
+bool Centroid::IsAssigned(int number)
+{
+	for (int& numberAssigned : Assigned) {
+		if (number == numberAssigned) {
+			return true;
+		}
+	}
+
+	return false;
+}

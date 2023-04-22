@@ -11,6 +11,7 @@ public:
 	std::map<int, double> Distances;
 	double Value;
 	std::vector<int> Assigned;
+	bool IsAssigned(int number);
 };
 
 
