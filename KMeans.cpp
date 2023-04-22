@@ -50,8 +50,10 @@ double KMeans::GetMaxFromValues() {
 
 	double max = 0;
 
-	for (int i = 0; i < mValues.size(); i++) {
-		double checkValue = mValues[i];
+	std::map<int, double>::iterator it;
+
+	for (it = mValues.begin(); it != this->mValues.end(); it++) {
+		double checkValue = it->second;
 		if (checkValue > max) {
 			max = checkValue;
 		}

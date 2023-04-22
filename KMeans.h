@@ -24,6 +24,7 @@ public:
 	KMeans(int amount, std::map<int, double> values);
 	void SetCentroids(std::vector<Centroid> centroids) { this->mCentroids = centroids; };
 	std::vector<Centroid> GetCentroids() { return this->mCentroids; }
+	std::map<int, double> GetValues() { return this->mValues;  }
 	std::vector<Centroid> CreateCentroids();
 	std::vector<double> GetRandomStartingPoints();
 	double GetMaxFromValues();

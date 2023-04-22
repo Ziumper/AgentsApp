@@ -87,13 +87,18 @@ TEST(KMeansTest, CanGetTwoDifferentRandomPoints) {
 	}
 }
 
-TEST(KMeansTest, CentroidHaveNotZeroStartingPoints) {
+TEST(KMeansTest, DoesntAddAnyMoreStandardPointsToValuesWhileCheckingMaxValues) {
 	KMeans kMeans = GetTestKMeans();
-	std::vector<Centroid> centroids = kMeans.CreateCentroids();
+	
+	double max = kMeans.GetMaxFromValues();
+	std::map<int, double> values = kMeans.GetValues();
 
-	for (Centroid& centroid : centroids) {
-		EXPECT_FALSE(KMeans::IsTwoDoubleEqual(0, centroid.Value));
+	std::map<int, double>::iterator it; 
+
+	for (it = values.begin(); it != values.end(); it++) {
+		EXPECT_GT(it->first, 0);
 	}
+	
 }
 
 TEST(KMeansTest, IsEqualDouble) {
