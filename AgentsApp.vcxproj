@@ -104,14 +104,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>imgui/backends;imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>OpenXLSX\external;OpenXLSX\external\zippy;OpenXLSX\external\nowide\nowide;OpenXLSX\external\nowide;OpenXLSX\headers;OpenXLSX\sources\utilities;OpenXLSX\sources;OpenXLSX\external\pugixml;imgui/backends;imgui;C:\Projects\Studia\Prognozowanie\AgentsApp\AgentsApp\OpenXLSX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x64;C:\Projects\Studia\Prognozowanie;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d9.lib;OpenXLSX.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>imgui;imgui/backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>imgui;imgui/backends;OpenXLSX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,6 +144,28 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="KMeans.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="OpenXLSX\external\pugixml\pugixml.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCell.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCellIterator.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCellRange.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCellReference.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCellValue.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLColor.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLColumn.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLContentTypes.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLDateTime.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLDocument.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLFormula.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLProperties.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLRelationships.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLRow.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLRowData.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLSharedStrings.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLSheet.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLWorkbook.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLXmlData.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLXmlFile.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLZipArchive.cpp" />
     <ClCompile Include="Rae.cpp" />
     <ClCompile Include="Randomizer.cpp" />
   </ItemGroup>
@@ -158,8 +180,60 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="KMeans.h" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\args.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\cenv.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\config.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\convert.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\cstdio.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\cstdlib.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\encoding_errors.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\encoding_utf.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\filebuf.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\fstream.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\iostream.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\scoped_ptr.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\stackstring.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\system.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\utf.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\utf8_codecvt.hpp" />
+    <ClInclude Include="OpenXLSX\external\nowide\nowide\windows.hpp" />
+    <ClInclude Include="OpenXLSX\external\pugixml\pugiconfig.hpp" />
+    <ClInclude Include="OpenXLSX\external\pugixml\pugixml.hpp" />
+    <ClInclude Include="OpenXLSX\external\zippy\zippy.hpp" />
+    <ClInclude Include="OpenXLSX\headers\OpenXLSX-Exports.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLCell.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLCellIterator.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLCellRange.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLCellReference.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLCellValue.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLColor.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLColumn.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLCommandQuery.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLConstants.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLContentTypes.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLDateTime.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLDocument.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLException.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLFormula.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLIterator.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLProperties.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLRelationships.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLRow.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLRowData.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLSharedStrings.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLSheet.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLWorkbook.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLXmlData.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLXmlFile.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLXmlParser.hpp" />
+    <ClInclude Include="OpenXLSX\headers\XLZipArchive.hpp" />
+    <ClInclude Include="OpenXLSX\OpenXLSX.hpp" />
+    <ClInclude Include="OpenXLSX\sources\utilities\XLUtilities.hpp" />
     <ClInclude Include="Rae.h" />
     <ClInclude Include="Randomizer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OpenXLSX\LICENSE.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

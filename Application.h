@@ -4,6 +4,7 @@
 #include <string>
 #include "Rae.h"
 
+
 namespace AgentsApp
 {
 	class AgentsAppLog : public Rae::RaeLogger {
@@ -25,4 +26,5 @@ namespace AgentsApp
 
 	void RenderUI();
 	void ShowRtbsmWindow();
+	void Export();
 }
