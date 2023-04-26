@@ -8,7 +8,7 @@ It contains my own implementation of K-Means clustering.
 
 ## Libraries used
 
-[ImGui](https://github.com/ocornut/imgui) - rendering engine
+[ImGui](https://github.com/ocornut/imgui) - for GUI elements etc.
 
 [GoogleTests](https://github.com/google/googletest) - you know for tests in c++
 
