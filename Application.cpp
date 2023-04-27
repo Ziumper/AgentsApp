@@ -214,6 +214,14 @@ namespace AgentsApp
 			if (clicked) {
 				monteCarlo.Start();
 			}
+
+			bool exportFile = ImGui::Button("Export file");
+			if (exportFile) {
+				Export();
+			
+				
+
+			}
 		}
 		else {
 			bool clicked = ImGui::Button("Start");
@@ -221,14 +229,18 @@ namespace AgentsApp
 				monteCarlo.Start();
 			}
 		}
+
+		bool open = true;
+		if (ImGui::BeginPopupModal("Export result", &open, ImGuiWindowFlags_AlwaysAutoResize)) {
+			std::string message = "Results exported into file:";
+			message.append(" ./Report.xlsx");
+			ImGui::Text(message.c_str());
+			ImGui::EndPopup();
+		}
 		
 
 		monteCarlo.Update();
 
-		bool exportFile = ImGui::Button("Export file");
-		if (exportFile) {
-			Export();
-		}
 
 		ImGui::End();
 
@@ -269,14 +281,14 @@ namespace AgentsApp
 	}
 
 	void Export() {
-
+		std::string fileName = "./Report.xlsx";
 		// This example program illustrates basic usage of OpenXLSX, for example creation of a new workbook, and read/write
 		// of cell values.
 
 		// First, create a new document and access the sheet named 'Sheet1'.
 		// New documents contain a single worksheet named 'Sheet1'
 		XLDocument doc;
-		doc.create("./Demo01.xlsx");
+		doc.create(fileName);
 		auto wks = doc.workbook().worksheet("Sheet1");
 
 		// The individual cells can be accessed by using the .cell() method on the worksheet object.
@@ -366,6 +378,9 @@ namespace AgentsApp
 
 		doc.save();
 		doc.close();
+		
+		ImGui::OpenPopup("Export result");
+
 	}
 
 
