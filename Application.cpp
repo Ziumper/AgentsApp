@@ -293,13 +293,25 @@ namespace AgentsApp
 		workbook.deleteSheet(defaultWorkSheetName);
 
 		//set column names 
-		cyclesWorkSheet.cell("A1").value() = "S Traectory";
-		cyclesWorkSheet.cell("B1").value() = "H Traectory";
-		cyclesWorkSheet.cell("C1").value() = "Netto";
+		
+		cyclesWorkSheet.cell("A1").value() = "Cycle";
+		cyclesWorkSheet.cell("B1").value() = "S Traectory"; 
+		cyclesWorkSheet.cell("C1").value() = "H Traectory";
+		cyclesWorkSheet.cell("D1").value() = "Netto";
 
+		//set cycles number
+		std::string columnLetter = "A";
+		for (int i = 0; i < simulation.cyclesAmount; i++) {
+			std::string myCellCordinate = columnLetter;
+			int columnNumber = i + 2;
+			myCellCordinate.append(std::to_string(columnNumber));
+			XLCell cell = cyclesWorkSheet.cell(myCellCordinate);
+			int valueToSave = i + 1;
+			cell.value() = valueToSave;
+		}
 
 		//save values for first cell
-		std::string columnLetter = "A";
+		columnLetter = "B";
 		for (int i = 0; i < simulation.cyclesAmount; i++) {
 			std::string myCellCordinate = columnLetter;
 			int columnNumber = i + 2;
@@ -310,7 +322,7 @@ namespace AgentsApp
 		}
 
 		//save values for second cell
-		columnLetter = "B";
+		columnLetter = "C";
 		for (int i = 0; i < simulation.cyclesAmount; i++) {
 			std::string myCellCordinate = columnLetter;
 			int columnNumber = i + 2;
@@ -321,7 +333,7 @@ namespace AgentsApp
 		}
 
 		//save values for second cell
-		columnLetter = "C";
+		columnLetter = "D";
 		for (int i = 0; i < simulation.cyclesAmount; i++) {
 			std::string myCellCordinate = columnLetter;
 			int columnNumber = i + 2;
