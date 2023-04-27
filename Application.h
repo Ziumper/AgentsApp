@@ -26,5 +26,5 @@ namespace AgentsApp
 
 	void RenderUI();
 	void ShowRtbsmWindow();
-	void Export();
+	void Export(Rae::MonteCarlo simulation);
 }
