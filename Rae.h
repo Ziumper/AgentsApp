@@ -159,7 +159,7 @@ namespace Rae
 		std::vector<float> HAgentTraectoryAvg;
 		std::vector<float> NettoOutflow;
 		std::vector<float> FinalTrust;
-
+		std::vector<float> CycleNumbersForPlot;
 
 		RaeLogger* logger;
 		GoodWill goodWill{ GoodWill() };
@@ -173,11 +173,5 @@ namespace Rae
 		std::vector<float> GetTrustLevels();
 	};
 
-	//TODO
-	/*
-	* 1. Przerobiæ konstruktory
-	* 2. Przekopiowaæ referencje do tablicy z mCurrentCycle do mCycles
-	* 3. To samo zrobiæ dla agentów - punkt 2
-	* 4. Update dla agenta i losowanie pojedyñczego agenta
-	*/
+
 }

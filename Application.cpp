@@ -9,6 +9,7 @@
 #include <OpenXLSX.hpp>
 #include <iostream>
 #include <cmath>
+#include <implot.h>
 
 using namespace OpenXLSX;
 
@@ -184,6 +185,9 @@ namespace AgentsApp
 	{
 		static Rae::MonteCarlo monteCarlo(&logger);
 		ImGui::Begin("RTBS System");
+
+		
+
 		ImGui::SeparatorText("Inputs");
 
 		ImGui::InputInt("Cycles", &monteCarlo.cyclesAmount);
@@ -200,9 +204,6 @@ namespace AgentsApp
 		ImGui::InputDouble("z", &monteCarlo.goodWill.z);
 		ImGui::SeparatorText("Starting trust measure");
 		ImGui::InputDouble("V_0 trust", &monteCarlo.beginTrustMesaure);
-
-
-		
 		ImGui::SeparatorText("Options");
 		ImGui::Checkbox("Boost Mode", &monteCarlo.boostMode);
 		ImGui::Checkbox("Logging On/Off", &logger.Enabled);
@@ -218,9 +219,6 @@ namespace AgentsApp
 			bool exportFile = ImGui::Button("Export file");
 			if (exportFile) {
 				Export(monteCarlo);
-			
-				
-
 			}
 		}
 		else {
@@ -265,11 +263,32 @@ namespace AgentsApp
 		ImGui::Text(message.c_str());
 		
 		if (monteCarlo.Done) {
-			static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-			ImGui::PlotLines("Vs(t) Traectory ", &monteCarlo.SAgentTraectoryAvg[0], monteCarlo.cyclesAmount, 0, NULL, 0, 1.0f, ImVec2(0, 80));
-			ImGui::PlotLines("Vh(t) Traectory ", &monteCarlo.HAgentTraectoryAvg[0], monteCarlo.cyclesAmount, 0, NULL, 0, 1.0f, ImVec2(0, 80));
-			ImGui::PlotLines("Netto Outflow", &monteCarlo.NettoOutflow[0], monteCarlo.cyclesAmount, 0, NULL, -1.0f, 1.0f, ImVec2(0, 80));
-			ImGui::PlotLines("Final Trust", &monteCarlo.FinalTrust[0], monteCarlo.agentsAmount, 0, NULL, 0, 1.0f, ImVec2(0, 80));
+
+			ImGui::SeparatorText("Plots");
+
+			//Strategic plot draw
+			if (ImPlot::BeginPlot("Strategic Agent Trust Traectory")) {
+				ImPlot::PlotLine("Vs(t)", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.SAgentTraectoryAvg[0], monteCarlo.cyclesAmount);
+				
+				ImPlot::EndPlot();
+			}
+
+			//honest plot draw
+			if (ImPlot::BeginPlot("Honest Agent Trust Traectory")) {
+				ImPlot::PlotLine("Vh(t)", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.HAgentTraectoryAvg[0], monteCarlo.cyclesAmount);
+
+				ImPlot::EndPlot();
+			}
+
+			ImGui::Separator();
+
+			
+			//netto outflow
+			if (ImPlot::BeginPlot("Netto outflow from Honest agents")) {
+				ImPlot::PlotLine("Vh(t)", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.NettoOutflow[0], monteCarlo.cyclesAmount);
+				ImPlot::EndPlot();
+			}
+
 		}
 
 

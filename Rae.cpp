@@ -540,6 +540,7 @@ namespace Rae {
 		HAgentTraectoryAvg.clear();
 		NettoOutflow.clear();
 		FinalTrust.clear();
+		CycleNumbersForPlot.clear();
 
 		//std::vector<float> SAgentTraectoryAvg;
 		//std::vector<float> HAgentTraectoryAvg;
@@ -550,6 +551,7 @@ namespace Rae {
 			SAgentTraectoryAvg.push_back(cycle.StrategicTraectory);
 			HAgentTraectoryAvg.push_back(cycle.HonestTraectory);
 			NettoOutflow.push_back(cycle.NetOutflow);
+			CycleNumbersForPlot.push_back((float)cycle.Round);
 		}
 
 		for (Agent& agent : mAgents) {

@@ -34,6 +34,9 @@
     <Filter Include="OpenXLSX\external\pugixml">
       <UniqueIdentifier>{313ac7d2-7906-491e-8e5b-ff5a7a5d6df9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="imgui\implot">
+      <UniqueIdentifier>{1e41a323-2e30-48cf-ab4b-b1e7e6318ba3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -137,6 +140,15 @@
     </ClCompile>
     <ClCompile Include="OpenXLSX\external\pugixml\pugixml.cpp">
       <Filter>OpenXLSX\external\pugixml</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\implot\implot.cpp">
+      <Filter>imgui\implot</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\implot\implot_demo.cpp">
+      <Filter>imgui\implot</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\implot\implot_items.cpp">
+      <Filter>imgui\implot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +334,12 @@
     </ClInclude>
     <ClInclude Include="OpenXLSX\external\pugixml\pugiconfig.hpp">
       <Filter>OpenXLSX\external\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\implot\implot.h">
+      <Filter>imgui\implot</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\implot\implot_internal.h">
+      <Filter>imgui\implot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

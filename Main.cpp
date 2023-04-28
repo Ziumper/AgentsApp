@@ -8,6 +8,7 @@
 #include <d3d9.h>
 #include <tchar.h>
 #include "Application.h";
+#include <implot.h>
 
 // Data
 static LPDIRECT3D9              g_pD3D = NULL;
@@ -45,6 +46,7 @@ int main(int, char**)
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -144,7 +146,9 @@ int main(int, char**)
 
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
+	ImPlot::DestroyContext();
 	ImGui::DestroyContext();
+	
 
 	CleanupDeviceD3D();
 	::DestroyWindow(hwnd);
