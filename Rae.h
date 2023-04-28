@@ -141,8 +141,8 @@ namespace Rae
 		void ReportAgents();
 		void ApplyNewTrustLevels();
 		void PreserveCycle();
-		double CalculateRecpientPolicy();
-		double CalculateSupplierPolicy();
+		double CalculateRecipientTresholdValue();
+		double CalculateSupplierTresholdValue();
 		double CalculateHonestPolicyAgentFunction();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;

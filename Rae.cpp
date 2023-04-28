@@ -223,8 +223,8 @@ namespace Rae {
 		RealRandomizer randomizer = RealRandomizer(0, 1);
 
 
-		CalculateRecpientPolicy();
-		CalculateSupplierPolicy();
+		CalculateRecipientTresholdValue();
+		CalculateSupplierTresholdValue();
 
 		//calculation for netto outflow
 		mCurrentRecipient.AviliabilitySupplierSum = mCurrentRecipient.AviliabilitySupplierSum + mCurrentSupplier.SupplierPolicy;
@@ -290,7 +290,7 @@ namespace Rae {
 	}
 
 	//Calculating Rij
-	double MonteCarlo::CalculateRecpientPolicy()
+	double MonteCarlo::CalculateRecipientTresholdValue()
 	{
 		//L(Vi(t),x) - case i is S , and J is H
 		if (mCurrentSupplier.isStrategicAgent && mCurrentRecipient.isStrategicAgent == false) {
@@ -300,7 +300,7 @@ namespace Rae {
 		//min{z,LVi(t),x) - case i is H and J is S
 		if (mCurrentSupplier.isStrategicAgent == false && mCurrentRecipient.isStrategicAgent) {
 			double honestPolicy = CalculateHonestPolicyAgentFunction();
-			double min = std::min(goodWill.z, honestPolicy);
+			double min = std::min(goodWill.z, honestPolicy,goodWill.x);
 			return min;
 		}
 
@@ -309,11 +309,26 @@ namespace Rae {
 	}
 
 	//Calculating Pij
-	double MonteCarlo::CalculateSupplierPolicy()
+	double MonteCarlo::CalculateSupplierTresholdValue()
 	{
+		//min{y,LVj(t),x)} j is H and i is S
+		if (mCurrentRecipient.isStrategicAgent == false && mCurrentSupplier.isStrategicAgent) {
+			double honestPolicy = CalculateHonestPolicyAgentFunction();
+			double min = std::min(goodWill.y, honestPolicy, goodWill.x);
+			return min;
+		}
+
+		//L(Vj(t),x) j is Strategic Agent and i is honest
+		if (mCurrentRecipient.isStrategicAgent && mCurrentSupplier.isStrategicAgent == false) {
+			double honestPolicy = CalculateHonestPolicyAgentFunction();
+			return honestPolicy;
+		}
+
+		//case i is S and , J is S return 1
 		return 1;
 	}
 
+	//TODO add arguments to functions
 	double MonteCarlo::CalculateHonestPolicyAgentFunction()
 	{
 		return 0.0;
