@@ -26,7 +26,7 @@ namespace Rae {
 
 	double Agent::CalculateRaeIT()
 	{
-		return trust * serviceReception;
+		return trust * RecipientPolicy;
 	}
 
 	Agent AgentsFactory::Create()
@@ -222,18 +222,12 @@ namespace Rae {
 		//question1 should suppiler be redundant?
 		RealRandomizer randomizer = RealRandomizer(0, 1);
 
-		/// <summary>
-		/// Rij
-		/// </summary>
-		double recipientPolicy = randomizer.GetEvenRandomNumber();
 
-		/// <summary>
-		/// Pij
-		/// </summary> 
-		double suppilerPolicy = randomizer.GetEvenRandomNumber();
+		CalculateRecpientPolicy();
+		CalculateSupplierPolicy();
 
 		//calculation for netto outflow
-		mCurrentRecipient.AviliabilitySupplierSum = mCurrentRecipient.AviliabilitySupplierSum + mCurrentSupplier.serviceAvailiability;
+		mCurrentRecipient.AviliabilitySupplierSum = mCurrentRecipient.AviliabilitySupplierSum + mCurrentSupplier.SupplierPolicy;
 
 		if (mCurrentSupplier.isStrategicAgent)
 			mCurrentRecipient.StrategicSuppliersCount = mCurrentRecipient.StrategicSuppliersCount + 1;
@@ -293,6 +287,36 @@ namespace Rae {
 		mCycles[this->mCurrentCycle.Round].HonestTraectory = this->mCycleTempHonestTraectory;
 		mCycles[this->mCurrentCycle.Round].NetOutflow = this->mCycleTempOutflow;
 		mCycles[this->mCurrentCycle.Round].StrategicTraectory = this->mCycleTempStategicTraectory;
+	}
+
+	//Calculating Rij
+	double MonteCarlo::CalculateRecpientPolicy()
+	{
+		//L(Vi(t),x) - case i is S , and J is H
+		if (mCurrentSupplier.isStrategicAgent && mCurrentRecipient.isStrategicAgent == false) {
+			return CalculateHonestPolicyAgentFunction();
+		}
+
+		//min{z,LVi(t),x) - case i is H and J is S
+		if (mCurrentSupplier.isStrategicAgent == false && mCurrentRecipient.isStrategicAgent) {
+			double honestPolicy = CalculateHonestPolicyAgentFunction();
+			double min = std::min(goodWill.z, honestPolicy);
+			return min;
+		}
+
+		//case i is S and , J is S return 1
+		return 1;
+	}
+
+	//Calculating Pij
+	double MonteCarlo::CalculateSupplierPolicy()
+	{
+		return 1;
+	}
+
+	double MonteCarlo::CalculateHonestPolicyAgentFunction()
+	{
+		return 0.0;
 	}
 
 	void MonteCarlo::Interact()
@@ -544,11 +568,6 @@ namespace Rae {
 		NettoOutflow.clear();
 		FinalTrust.clear();
 		CycleNumbersForPlot.clear();
-
-		//std::vector<float> SAgentTraectoryAvg;
-		//std::vector<float> HAgentTraectoryAvg;
-		//std::vector<float> NettoOutflow;
-		//std::vector<float> FinalTrust;
 
 		for (Cycle& cycle : mCycles) {
 			SAgentTraectoryAvg.push_back(cycle.StrategicTraectory);

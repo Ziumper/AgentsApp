@@ -29,6 +29,8 @@ namespace Rae
 
 	class Agent {
 	public:
+		double SupplierPolicy{ 0 }; //P(i,j)
+		double RecipientPolicy{ 0 }; //R(i,j)
 		int Number{ 0 };
 		double trust{ 0 };
 		double serviceAvailiability{ 0 };
@@ -47,6 +49,8 @@ namespace Rae
 			HonestSuppilersCount = 0;
 			StrategicSuppliersCount = 0;
 			AviliabilitySupplierSum = 0;
+			SupplierPolicy = 0;
+			RecipientPolicy = 0;
 		}
 
 		void CopyValues(Agent agent);
@@ -101,8 +105,8 @@ namespace Rae
 	class MonteCarlo {
 	private:
 		Cycle mCurrentCycle;
-		Agent mCurrentRecipient;
-		Agent mCurrentSupplier;
+		Agent mCurrentRecipient; //this is j-agent
+		Agent mCurrentSupplier;  //this is i-agent
 		int mInteractionIndex{ 0 };
 		double mCycleTempHonestTraectory{ 0 };
 		double mCycleTempStategicTraectory{ 0 };
@@ -137,6 +141,9 @@ namespace Rae
 		void ReportAgents();
 		void ApplyNewTrustLevels();
 		void PreserveCycle();
+		double CalculateRecpientPolicy();
+		double CalculateSupplierPolicy();
+		double CalculateHonestPolicyAgentFunction();
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
 		bool mGeneratingReportDone{ false };
