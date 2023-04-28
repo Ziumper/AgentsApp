@@ -239,6 +239,7 @@ namespace Rae {
 			mCurrentRecipient.StrategicSuppliersCount = mCurrentRecipient.StrategicSuppliersCount + 1;
 		else mCurrentRecipient.HonestSuppilersCount = mCurrentRecipient.HonestSuppilersCount + 1;
 			
+		//TODO get recipient policy instead serviceReception
 		mReportedSumForInteraction[mCurrentRecipient.Number] += mCurrentRecipient.CalculateRaeIT();
 
 		LogInteraction();
@@ -361,6 +362,7 @@ namespace Rae {
 		mIsRunning = true;
 	}
 
+	//Aij(t)
 	void MonteCarlo::SetServiceAvailiabilityForSupplier()
 	{
 		RealRandomizer agentServiceRandomizer = RealRandomizer(0, 1);
@@ -378,6 +380,7 @@ namespace Rae {
 		logger->AddLog(message.c_str());
 	}
 
+	//Gij(t) 
 	void MonteCarlo::SetServiceReceptionForRecipient()
 	{
 		RealRandomizer agentServiceRandomizer = RealRandomizer(0, 1);
