@@ -218,13 +218,16 @@ namespace Rae {
 		SetServiceReceptionForRecipient();
 		SetServiceAvailiabilityForSupplier();
 
-		//TODO calculate some policy. // it's random so far
-		//question1 should suppiler be redundant?
-		RealRandomizer randomizer = RealRandomizer(0, 1);
 
+		double tresholdrij = CalculateRecipientTresholdValue();
+		double tresholdpij = CalculateSupplierTresholdValue();
 
-		CalculateRecipientTresholdValue();
-		CalculateSupplierTresholdValue();
+		//calculating Pij - suppiler policy
+		mCurrentSupplier.SupplierPolicy = std::min(mCurrentSupplier.serviceAvailiability, tresholdpij);
+		
+		//calculating Rij - recipient policy
+		mCurrentRecipient.RecipientPolicy = std::min(mCurrentRecipient.serviceReception, tresholdrij);
+
 
 		//calculation for netto outflow
 		mCurrentRecipient.AviliabilitySupplierSum = mCurrentRecipient.AviliabilitySupplierSum + mCurrentSupplier.SupplierPolicy;
@@ -233,7 +236,6 @@ namespace Rae {
 			mCurrentRecipient.StrategicSuppliersCount = mCurrentRecipient.StrategicSuppliersCount + 1;
 		else mCurrentRecipient.HonestSuppilersCount = mCurrentRecipient.HonestSuppilersCount + 1;
 			
-		//TODO get recipient policy instead serviceReception
 		mReportedSumForInteraction[mCurrentRecipient.Number] += mCurrentRecipient.CalculateRaeIT();
 
 		LogInteraction();
@@ -289,18 +291,26 @@ namespace Rae {
 		mCycles[this->mCurrentCycle.Round].StrategicTraectory = this->mCycleTempStategicTraectory;
 	}
 
-	//Calculating Rij
+	//Calculating rij
 	double MonteCarlo::CalculateRecipientTresholdValue()
 	{
 		//L(Vi(t),x) - case i is S , and J is H
 		if (mCurrentSupplier.isStrategicAgent && mCurrentRecipient.isStrategicAgent == false) {
-			return CalculateHonestPolicyAgentFunction();
+			double honest = CalculateHonestRecipient(mCurrentRecipient.serviceReception,
+				mCurrentSupplier.serviceReception,
+				mCurrentRecipient.trust,
+				goodWill.x);
+			return honest;
 		}
 
 		//min{z,LVi(t),x) - case i is H and J is S
 		if (mCurrentSupplier.isStrategicAgent == false && mCurrentRecipient.isStrategicAgent) {
-			double honestPolicy = CalculateHonestPolicyAgentFunction();
-			double min = std::min(goodWill.z, honestPolicy,goodWill.x);
+			double honestPolicy = CalculateHonestRecipient(mCurrentRecipient.serviceReception,
+				mCurrentSupplier.serviceAvailiability,
+				mCurrentRecipient.trust,
+				goodWill.x);
+			double min = std::min(goodWill.z, honestPolicy);
+			min = std::min(goodWill.x, min);
 			return min;
 		}
 
@@ -308,19 +318,24 @@ namespace Rae {
 		return 1;
 	}
 
-	//Calculating Pij
+	//Calculating pij
 	double MonteCarlo::CalculateSupplierTresholdValue()
 	{
 		//min{y,LVj(t),x)} j is H and i is S
 		if (mCurrentRecipient.isStrategicAgent == false && mCurrentSupplier.isStrategicAgent) {
-			double honestPolicy = CalculateHonestPolicyAgentFunction();
-			double min = std::min(goodWill.y, honestPolicy, goodWill.x);
+			double honestPolicy = CalculateHonestSupplier(mCurrentSupplier.serviceAvailiability,
+				mCurrentSupplier.trust,
+				goodWill.x);
+			double min = std::min(goodWill.y, honestPolicy);
+			min = std::min(goodWill.x, min);
 			return min;
 		}
 
 		//L(Vj(t),x) j is Strategic Agent and i is honest
 		if (mCurrentRecipient.isStrategicAgent && mCurrentSupplier.isStrategicAgent == false) {
-			double honestPolicy = CalculateHonestPolicyAgentFunction();
+			double honestPolicy = CalculateHonestSupplier(mCurrentSupplier.serviceAvailiability,
+				mCurrentSupplier.trust,
+				goodWill.x);
 			return honestPolicy;
 		}
 
@@ -328,10 +343,22 @@ namespace Rae {
 		return 1;
 	}
 
-	//TODO add arguments to functions
-	double MonteCarlo::CalculateHonestPolicyAgentFunction()
+	//TODO add arguments to functions Pij
+	double MonteCarlo::CalculateHonestSupplier(double aij, double trustLevel, double goodWill)
 	{
-		return 0.0;
+		double subtract = 1 - goodWill;
+		if (trustLevel >= subtract) return aij;
+
+		return 0;
+	}
+
+	//TODO add arguments to functions Rij
+	double MonteCarlo::CalculateHonestRecipient(double gij, double pij,double trustLevel, float goodWill)
+	{
+		double subtract = 1 - goodWill;
+		if (trustLevel >= subtract) return gij*pij;
+
+		return 0;
 	}
 
 	void MonteCarlo::Interact()
