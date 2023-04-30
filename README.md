@@ -13,3 +13,5 @@ It contains my own implementation of K-Means clustering.
 [GoogleTests](https://github.com/google/googletest) - you know for tests in c++
 
 [OpenXLSX](https://github.com/troldal/OpenXLSX) - for XLSX export
+
+[ImPlot](https://github.com/epezent/implot) - for plots
