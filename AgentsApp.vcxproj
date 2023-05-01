@@ -122,7 +122,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>imgui;imgui/backends;OpenXLSX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>OpenXLSX\external;OpenXLSX\external\zippy;OpenXLSX\external\nowide\nowide;OpenXLSX\external\nowide;OpenXLSX\headers;OpenXLSX\sources\utilities;OpenXLSX\sources;OpenXLSX\external\pugixml;imgui/backends;imgui;imgui\implot;OpenXLSX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
