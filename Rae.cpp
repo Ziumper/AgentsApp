@@ -125,7 +125,7 @@ namespace Rae {
 			low = centroids[0];
 		}
 
-		//apply trust levels V(i +1) 
+		//apply trust levels V(t +1) 
 		logger->AddLog("Appling trust levels from RAE to agents for next cycle");
 		//sum 1
 
@@ -158,11 +158,11 @@ namespace Rae {
 			isHigh = high.IsAssigned(agent.Number);
 
 			if (isHigh) {
-				agent.trust = averageLow / averageHigh;
+				agent.trust = 1; //always one if high
 				continue;
 			}
 
-			agent.trust = averageLow;
+			agent.trust = averageLow; //just get average low
 		}
 
 		this->mCycleTempStategicTraectory = 0;
@@ -224,9 +224,13 @@ namespace Rae {
 
 		//calculating Pij - suppiler policy
 		mCurrentSupplier.SupplierPolicy = std::min(mCurrentSupplier.serviceAvailiability, tresholdpij);
+
+		logger->AddLog("Suppiler policy:", mCurrentSupplier.SupplierPolicy);
 		
 		//calculating Rij - recipient policy
 		mCurrentRecipient.RecipientPolicy = std::min(mCurrentRecipient.serviceReception, tresholdrij);
+
+		logger->AddLog("Recipient policy:", mCurrentRecipient.RecipientPolicy);
 
 
 		//calculation for netto outflow
