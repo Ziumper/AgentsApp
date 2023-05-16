@@ -148,7 +148,12 @@ namespace Rae {
 			sum = sum + assignedReportedAverage;
 		}
 
-		double averageHigh = sum / lowCount;
+		double averageHigh = sum / highCount;
+
+		double max = std::max(averageLow, averageHigh);
+		
+		double normHigh = averageHigh / max;
+		double normLow = averageLow / max;
 
 		//nromalization for each of agents gets always the average value of reported average 
 		for (Agent& agent : mAgents) {
@@ -158,11 +163,11 @@ namespace Rae {
 			isHigh = high.IsAssigned(agent.Number);
 
 			if (isHigh) {
-				agent.trust = 1; //always one if high
+				agent.trust = normHigh; //always one if high
 				continue;
 			}
 
-			agent.trust = averageLow; //just get average low
+			agent.trust = normLow; //just get average low
 		}
 
 		this->mCycleTempStategicTraectory = 0;
@@ -205,10 +210,10 @@ namespace Rae {
 			honestCountNetto = honestCountNetto + agent.StrategicSuppliersCount;
 		}
 
-		double calculationLeft = honestNettoSum / honestCountNetto;
-		double calculationRight = strategicNettoSum / strategicCountNetto;
+		double honestAverageNetto = honestNettoSum / honestCountNetto;
+		double stategicAverageNetto = strategicNettoSum / strategicCountNetto;
 
-		this->mCycleTempOutflow = calculationLeft - calculationRight;
+		this->mCycleTempOutflow = honestAverageNetto - stategicAverageNetto;
 	}
 
 
@@ -218,9 +223,9 @@ namespace Rae {
 		SetServiceReceptionForRecipient();
 		SetServiceAvailiabilityForSupplier();
 
-
-		double tresholdrij = CalculateRecipientTresholdValue();
 		double tresholdpij = CalculateSupplierTresholdValue();
+		double tresholdrij = CalculateRecipientTresholdValue();
+		
 
 		//calculating Pij - suppiler policy
 		mCurrentSupplier.SupplierPolicy = std::min(mCurrentSupplier.serviceAvailiability, tresholdpij);
@@ -228,13 +233,15 @@ namespace Rae {
 		logger->AddLog("Suppiler policy:", mCurrentSupplier.SupplierPolicy);
 		
 		//calculating Rij - recipient policy
-		mCurrentRecipient.RecipientPolicy = std::min(mCurrentRecipient.serviceReception, tresholdrij);
+		mCurrentRecipient.RecipientPolicy = std::min(mCurrentRecipient.serviceReception* tresholdpij, tresholdrij);
 
 		logger->AddLog("Recipient policy:", mCurrentRecipient.RecipientPolicy);
 
 
 		//calculation for netto outflow
-		mCurrentRecipient.AviliabilitySupplierSum = mCurrentRecipient.AviliabilitySupplierSum + mCurrentSupplier.SupplierPolicy;
+		bool isNotHonestHonestInteractionOrStrategicStrategic = mCurrentRecipient.isStrategicAgent != mCurrentSupplier.isStrategicAgent;
+		if(isNotHonestHonestInteractionOrStrategicStrategic)
+			mCurrentRecipient.AviliabilitySupplierSum = mCurrentRecipient.AviliabilitySupplierSum + mCurrentSupplier.SupplierPolicy;
 
 		if (mCurrentSupplier.isStrategicAgent)
 			mCurrentRecipient.StrategicSuppliersCount = mCurrentRecipient.StrategicSuppliersCount + 1;
@@ -300,8 +307,7 @@ namespace Rae {
 	{
 		//L(Vi(t),x) - case i is S , and J is H
 		if (mCurrentSupplier.isStrategicAgent && mCurrentRecipient.isStrategicAgent == false) {
-			double honest = CalculateHonestRecipient(mCurrentRecipient.serviceReception,
-				mCurrentSupplier.serviceReception,
+			double honest = CalculateHonestPolicy(
 				mCurrentRecipient.trust,
 				goodWill.x);
 			return honest;
@@ -309,8 +315,7 @@ namespace Rae {
 
 		//min{z,LVi(t),x) - case i is H and J is S
 		if (mCurrentSupplier.isStrategicAgent == false && mCurrentRecipient.isStrategicAgent) {
-			double honestPolicy = CalculateHonestRecipient(mCurrentRecipient.serviceReception,
-				mCurrentSupplier.serviceAvailiability,
+			double honestPolicy = CalculateHonestPolicy(
 				mCurrentRecipient.trust,
 				goodWill.x);
 			double min = std::min(goodWill.z, honestPolicy);
@@ -327,7 +332,7 @@ namespace Rae {
 	{
 		//min{y,LVj(t),x)} j is H and i is S
 		if (mCurrentRecipient.isStrategicAgent == false && mCurrentSupplier.isStrategicAgent) {
-			double honestPolicy = CalculateHonestSupplier(mCurrentSupplier.serviceAvailiability,
+			double honestPolicy = CalculateHonestPolicy(
 				mCurrentSupplier.trust,
 				goodWill.x);
 			double min = std::min(goodWill.y, honestPolicy);
@@ -337,7 +342,7 @@ namespace Rae {
 
 		//L(Vj(t),x) j is Strategic Agent and i is honest
 		if (mCurrentRecipient.isStrategicAgent && mCurrentSupplier.isStrategicAgent == false) {
-			double honestPolicy = CalculateHonestSupplier(mCurrentSupplier.serviceAvailiability,
+			double honestPolicy = CalculateHonestPolicy(
 				mCurrentSupplier.trust,
 				goodWill.x);
 			return honestPolicy;
@@ -347,20 +352,20 @@ namespace Rae {
 		return 1;
 	}
 
-	//TODO add arguments to functions Pij
-	double MonteCarlo::CalculateHonestSupplier(double aij, double trustLevel, double goodWill)
+	
+	double MonteCarlo::CalculateHonestPolicy(double trustLevel, double goodWill)
 	{
 		double subtract = 1 - goodWill;
-		if (trustLevel >= subtract) return aij;
+		if (trustLevel >= subtract) return 1;
 
 		return 0;
 	}
 
-	//TODO add arguments to functions Rij
+
 	double MonteCarlo::CalculateHonestRecipient(double gij, double pij,double trustLevel, float goodWill)
 	{
 		double subtract = 1 - goodWill;
-		if (trustLevel >= subtract) return gij*pij;
+		if (trustLevel >= subtract) return 1*pij;
 
 		return 0;
 	}
@@ -440,7 +445,7 @@ namespace Rae {
 		double serviceA = 0;
 		double availiability = 0;
 		serviceA = agentServiceRandomizer.GetEvenRandomNumber();
-		availiability = std::pow(serviceA, expoA);
+		availiability = std::pow(serviceA, 1/expoA);
 		mCurrentSupplier.serviceAvailiability = availiability;
 
 		std::string message = "setting service availiability for agent supplier: ";
@@ -459,7 +464,7 @@ namespace Rae {
 		double serviceA = 0;
 		
 		serviceA = agentServiceRandomizer.GetEvenRandomNumber();
-		reception = std::pow(serviceA, expoG);
+		reception = std::pow(serviceA, 1/expoG);
 		mCurrentRecipient.serviceReception = reception;
 
 		std::string message = "setting service recipient for agent supplier: ";

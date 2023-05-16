@@ -12,6 +12,7 @@
 #include <implot.h>
 
 using namespace OpenXLSX;
+//TODO add interactivity
 
 namespace AgentsApp
 {
@@ -267,25 +268,10 @@ namespace AgentsApp
 			ImGui::SeparatorText("Plots");
 
 			//Strategic plot draw
-			if (ImPlot::BeginPlot("Strategic Agent Trust Traectory")) {
-				ImPlot::PlotLine("Vs(t)", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.SAgentTraectoryAvg[0], monteCarlo.cyclesAmount);
-				
-				ImPlot::EndPlot();
-			}
-
-			//honest plot draw
-			if (ImPlot::BeginPlot("Honest Agent Trust Traectory")) {
-				ImPlot::PlotLine("Vh(t)", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.HAgentTraectoryAvg[0], monteCarlo.cyclesAmount);
-
-				ImPlot::EndPlot();
-			}
-
-			ImGui::Separator();
-
-			
-			//netto outflow
-			if (ImPlot::BeginPlot("Netto outflow from Honest agents")) {
-				ImPlot::PlotLine("Vh(t)", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.NettoOutflow[0], monteCarlo.cyclesAmount);
+			if (ImPlot::BeginPlot("Results")) {
+				ImPlot::PlotLine("Strategic Vs(t)", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.SAgentTraectoryAvg[0], monteCarlo.cyclesAmount);
+				ImPlot::PlotLine("Honest Vh(t)", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.HAgentTraectoryAvg[0], monteCarlo.cyclesAmount);
+				ImPlot::PlotLine("Netto", &monteCarlo.CycleNumbersForPlot[0], &monteCarlo.NettoOutflow[0], monteCarlo.cyclesAmount);
 				ImPlot::EndPlot();
 			}
 

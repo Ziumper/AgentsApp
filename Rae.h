@@ -142,7 +142,7 @@ namespace Rae
 		void PreserveCycle();
 		double CalculateRecipientTresholdValue();
 		double CalculateSupplierTresholdValue();
-		double CalculateHonestSupplier(double aij, double trustLevel, double goodWill);
+		double CalculateHonestPolicy(double trustLevel, double goodWill);
 		double CalculateHonestRecipient(double gij, double pij, double trustLevel, float goodWill);
 		AgentsFactory mAgentsFactory;
 		CycleFactory mCycleFactory;
