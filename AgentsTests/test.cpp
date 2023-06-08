@@ -6,6 +6,7 @@
 #include "../CSVReader.h"
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
 	auto start = 50;
@@ -72,6 +73,12 @@ void TestKMeansSeperated(KMeans kMeans) {
 				}
 			}
 	}
+}
+
+static std::string GetPathToFile(std::string filename) {
+	std::string executionRootPath = std::filesystem::current_path().string();
+	std::string filePath = executionRootPath + "\\..\\..\\" + filename;
+	return filePath;
 }
 
 TEST(KMeansTest, CanGetMaxFromValues) {
@@ -281,11 +288,22 @@ TEST(KMeansTest, IsAnyCentroidEmtpy) {
 	EXPECT_TRUE(kMeans.IsAnyCentroidEmpty());
 }
 
-TEST(CSVReaderTests, IsLoadedDataIsBiggerThanZero) {
-	CSVReader reader = CSVReader();
-	std::ifstream rfile;
-	rfile.open("path-to-txt-file");
-	reader.ReadCSV(rfile);
 
-	EXPECT_GT(0,0);
+
+TEST(CSVReaderTests, IsReadingFile) {
+	
+	std::string filename = "test.csv";
+	std::ifstream rfile(GetPathToFile(filename));
+	
+	EXPECT_TRUE(rfile);
+}
+
+
+TEST(CSVReaderTests, IsReadingCSVFile) {
+	CSVReader reader = CSVReader();
+	std::string filename = "test.csv";
+	std::ifstream rfile(GetPathToFile(filename));
+	
+	auto result = reader.ReadCSV(rfile);
+	EXPECT_GT(result.size(), 0);
 }
