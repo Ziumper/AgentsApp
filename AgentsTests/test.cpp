@@ -2,7 +2,10 @@
 #include "../Randomizer.h"
 #include <vector>
 #include "../KMeans.h"
-
+#include "../Twitch.h"
+#include "../CSVReader.h"
+#include <iostream>
+#include <fstream>
 
 TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
 	auto start = 50;
@@ -276,4 +279,13 @@ TEST(KMeansTest, IsAnyCentroidEmtpy) {
 	kMeans.SetCentroids(centroids);
 	
 	EXPECT_TRUE(kMeans.IsAnyCentroidEmpty());
+}
+
+TEST(CSVReaderTests, IsLoadedDataIsBiggerThanZero) {
+	CSVReader reader = CSVReader();
+	std::ifstream rfile;
+	rfile.open("path-to-txt-file");
+	reader.ReadCSV(rfile);
+
+	EXPECT_GT(0,0);
 }

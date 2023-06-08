@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CSVReader.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_dx9.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -172,9 +173,11 @@
     <ClCompile Include="OpenXLSX\sources\XLZipArchive.cpp" />
     <ClCompile Include="Rae.cpp" />
     <ClCompile Include="Randomizer.cpp" />
+    <ClCompile Include="Twitch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="CSVReader.h" />
     <ClInclude Include="imgui\backends\imgui_impl_dx9.h" />
     <ClInclude Include="imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -237,6 +240,7 @@
     <ClInclude Include="OpenXLSX\sources\utilities\XLUtilities.hpp" />
     <ClInclude Include="Rae.h" />
     <ClInclude Include="Randomizer.h" />
+    <ClInclude Include="Twitch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenXLSX\LICENSE.md" />

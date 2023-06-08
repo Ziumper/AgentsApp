@@ -88,7 +88,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>C:\Projects\Studia\Prognozowanie\AgentsApp\AgentsApp\AgentsTests\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(OutDir)Rae.obj;$(OutDir)KMeans.obj;$(OutDir)Randomizer.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OutDir)Rae.obj;$(OutDir)KMeans.obj;$(OutDir)Randomizer.obj;$(OutDir)Twitch.obj;$(OutDir)CSVReader.h;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
