@@ -60,3 +60,12 @@ std::vector<std::vector<std::string>> CSVReader::ReadCSV(std::istream& in)
     }
     return table;
 }
+
+std::vector<std::vector<std::string>> CSVReader::ReadCSV(std::string_view& path)
+{
+    std::string pathToFile = path.data();
+    std::ifstream rfile(pathToFile);
+
+    auto result = this->ReadCSV(rfile);
+    return result;
+}

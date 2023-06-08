@@ -298,7 +298,6 @@ TEST(CSVReaderTests, IsReadingFile) {
 	EXPECT_TRUE(rfile);
 }
 
-
 TEST(CSVReaderTests, IsReadingCSVFile) {
 	CSVReader reader = CSVReader();
 	std::string filename = "test.csv";
@@ -306,4 +305,30 @@ TEST(CSVReaderTests, IsReadingCSVFile) {
 	
 	auto result = reader.ReadCSV(rfile);
 	EXPECT_GT(result.size(), 0);
+}
+
+TEST(CSVReaderTests,IsReadingCSVFileFromStringView) {
+	CSVReader reader = CSVReader();
+	std::string pathString = GetPathToFile("test.csv");
+	std::string_view pathTofile = std::string_view(pathString);
+	auto result = reader.ReadCSV(pathTofile);
+	EXPECT_GT(result.size(), 0);
+}
+
+TEST(TwitchTests, IsReadingTwitchUsers) {
+	Twitch twitch = Twitch();
+	std::string pathToString = GetPathToFile("test.csv");
+	std::string_view path = std::string_view(pathToString);
+	auto result = twitch.ReadTwitchUserData(path);
+	EXPECT_GT(result.size(), 0);
+}
+
+TEST(TwitchTests, IsCreatingTwitchUserCorrectly) {
+	Twitch twitch = Twitch();
+	std::string pathToString = GetPathToFile("test.csv");
+	std::string_view path = std::string_view(pathToString);
+	CSVReader reader = CSVReader();
+	auto result = reader.ReadCSV(path);
+	TwitchUser user = TwitchUser(result[1]);
+	EXPECT_GT(user.Id, 0);
 }
