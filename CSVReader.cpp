@@ -61,7 +61,7 @@ std::vector<std::vector<std::string>> CSVReader::ReadCSV(std::istream& in)
     return table;
 }
 
-std::vector<std::vector<std::string>> CSVReader::ReadCSV(std::string_view& path)
+std::vector<std::vector<std::string>> CSVReader::ReadCSV(std::string& path)
 {
     std::string pathToFile = path.data();
     std::ifstream rfile(pathToFile);

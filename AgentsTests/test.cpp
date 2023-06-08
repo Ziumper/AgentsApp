@@ -309,26 +309,42 @@ TEST(CSVReaderTests, IsReadingCSVFile) {
 
 TEST(CSVReaderTests,IsReadingCSVFileFromStringView) {
 	CSVReader reader = CSVReader();
-	std::string pathString = GetPathToFile("test.csv");
-	std::string_view pathTofile = std::string_view(pathString);
-	auto result = reader.ReadCSV(pathTofile);
+	std::string path = GetPathToFile("test.csv");
+	auto result = reader.ReadCSV(path);
 	EXPECT_GT(result.size(), 0);
 }
 
 TEST(TwitchTests, IsReadingTwitchUsers) {
 	Twitch twitch = Twitch();
 	std::string pathToString = GetPathToFile("test.csv");
-	std::string_view path = std::string_view(pathToString);
-	auto result = twitch.ReadTwitchUserData(path);
+	auto result = twitch.ReadTwitchUserData(pathToString);
 	EXPECT_GT(result.size(), 0);
 }
 
 TEST(TwitchTests, IsCreatingTwitchUserCorrectly) {
 	Twitch twitch = Twitch();
 	std::string pathToString = GetPathToFile("test.csv");
-	std::string_view path = std::string_view(pathToString);
 	CSVReader reader = CSVReader();
-	auto result = reader.ReadCSV(path);
+	auto result = reader.ReadCSV(pathToString);
 	TwitchUser user = TwitchUser(result[1]);
 	EXPECT_GT(user.Id, 0);
+}
+
+TEST(TwitchTests, IsCreatingTwitchUserWithStreamsCorrectly) {
+	Twitch twitch = Twitch();
+	std::string pathToString = GetPathToFile("test.csv");
+	std::vector<std::string> pathsToStreamerFiles;
+	pathsToStreamerFiles.push_back(GetPathToFile("testStreams.csv"));
+	auto users = twitch.ReadTwitchUserData(pathsToStreamerFiles,pathToString);
+	TwitchUser user = users[0];
+
+	EXPECT_GT(user.Streams.size(), 0);
+}
+
+TEST(TwitchTests, IsCreatingTwitchStreamsCorrectlyFromDataPath) {
+	Twitch twitch = Twitch();
+	std::string pathToString = GetPathToFile("testStreams.csv");
+	
+	auto result = twitch.ReadTwitchStreams(pathToString);
+	EXPECT_GT(result.size(), 0);
 }
