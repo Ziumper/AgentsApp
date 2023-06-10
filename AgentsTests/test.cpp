@@ -2,7 +2,11 @@
 #include "../Randomizer.h"
 #include <vector>
 #include "../KMeans.h"
-
+#include "../Twitch.h"
+#include "../CSVReader.h"
+#include <iostream>
+#include <fstream>
+#include <filesystem>
 
 TEST(SupplierRandomizerTests, CanGetEvenDistributionFor1000RandomNumbers) {
 	auto start = 50;
@@ -69,6 +73,12 @@ void TestKMeansSeperated(KMeans kMeans) {
 				}
 			}
 	}
+}
+
+static std::string GetPathToFile(std::string filename) {
+	std::string executionRootPath = std::filesystem::current_path().string();
+	std::string filePath = executionRootPath + "\\..\\..\\" + filename;
+	return filePath;
 }
 
 TEST(KMeansTest, CanGetMaxFromValues) {
@@ -276,4 +286,65 @@ TEST(KMeansTest, IsAnyCentroidEmtpy) {
 	kMeans.SetCentroids(centroids);
 	
 	EXPECT_TRUE(kMeans.IsAnyCentroidEmpty());
+}
+
+
+
+TEST(CSVReaderTests, IsReadingFile) {
+	
+	std::string filename = "test.csv";
+	std::ifstream rfile(GetPathToFile(filename));
+	
+	EXPECT_TRUE(rfile);
+}
+
+TEST(CSVReaderTests, IsReadingCSVFile) {
+	CSVReader reader = CSVReader();
+	std::string filename = "test.csv";
+	std::ifstream rfile(GetPathToFile(filename));
+	
+	auto result = reader.ReadCSV(rfile);
+	EXPECT_GT(result.size(), 0);
+}
+
+TEST(CSVReaderTests,IsReadingCSVFileFromStringView) {
+	CSVReader reader = CSVReader();
+	std::string path = GetPathToFile("test.csv");
+	auto result = reader.ReadCSV(path);
+	EXPECT_GT(result.size(), 0);
+}
+
+TEST(TwitchTests, IsReadingTwitchUsers) {
+	Twitch twitch = Twitch();
+	std::string pathToString = GetPathToFile("test.csv");
+	auto result = twitch.ReadTwitchUserData(pathToString);
+	EXPECT_GT(result.size(), 0);
+}
+
+TEST(TwitchTests, IsCreatingTwitchUserCorrectly) {
+	Twitch twitch = Twitch();
+	std::string pathToString = GetPathToFile("test.csv");
+	CSVReader reader = CSVReader();
+	auto result = reader.ReadCSV(pathToString);
+	TwitchUser user = TwitchUser(result[1]);
+	EXPECT_GT(user.Id, 0);
+}
+
+TEST(TwitchTests, IsCreatingTwitchUserWithStreamsCorrectly) {
+	Twitch twitch = Twitch();
+	std::string pathToString = GetPathToFile("test.csv");
+	std::vector<std::string> pathsToStreamerFiles;
+	pathsToStreamerFiles.push_back(GetPathToFile("testStreams.csv"));
+	auto users = twitch.ReadTwitchUserData(pathsToStreamerFiles,pathToString);
+	TwitchUser user = users[0];
+
+	EXPECT_GT(user.Streams.size(), 0);
+}
+
+TEST(TwitchTests, IsCreatingTwitchStreamsCorrectlyFromDataPath) {
+	Twitch twitch = Twitch();
+	std::string pathToString = GetPathToFile("testStreams.csv");
+	
+	auto result = twitch.ReadTwitchStreams(pathToString);
+	EXPECT_GT(result.size(), 0);
 }

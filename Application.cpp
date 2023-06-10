@@ -208,6 +208,7 @@ namespace AgentsApp
 		ImGui::SeparatorText("Options");
 		ImGui::Checkbox("Boost Mode", &monteCarlo.boostMode);
 		ImGui::Checkbox("Logging On/Off", &logger.Enabled);
+		ImGui::Checkbox("Is Validation", &monteCarlo.IsValidation);
 
 		ImGui::SeparatorText("Actions");
 

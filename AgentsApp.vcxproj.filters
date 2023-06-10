@@ -150,6 +150,12 @@
     <ClCompile Include="imgui\implot\implot_items.cpp">
       <Filter>imgui\implot</Filter>
     </ClCompile>
+    <ClCompile Include="Twitch.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="CSVReader.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -340,6 +346,12 @@
     </ClInclude>
     <ClInclude Include="imgui\implot\implot_internal.h">
       <Filter>imgui\implot</Filter>
+    </ClInclude>
+    <ClInclude Include="Twitch.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="CSVReader.h">
+      <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
