@@ -194,7 +194,7 @@ namespace AgentsApp
 		ImGui::InputInt("Cycles", &monteCarlo.cyclesAmount);
 		ImGui::InputInt("Agents", &monteCarlo.agentsAmount);
 		ImGui::InputInt("s-Agents", &monteCarlo.strategicAgentsAmount);
-
+	
 		ImGui::InputInt("kMin", &monteCarlo.kMin);
 		ImGui::InputInt("kMax", &monteCarlo.kMax);
 		ImGui::InputDouble("expoA", &monteCarlo.expoA);
@@ -211,6 +211,12 @@ namespace AgentsApp
 		ImGui::Checkbox("Is Validation", &monteCarlo.IsValidation);
 
 		ImGui::SeparatorText("Actions");
+
+		bool clickedRandom = ImGui::Button("Set Random Policy");
+		if(clickedRandom) {
+			monteCarlo.SetRandomProperties();
+			
+		}
 
 		if (monteCarlo.Done) {
 			bool clicked = ImGui::Button("Start Again");

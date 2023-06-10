@@ -152,7 +152,7 @@ namespace Rae
 		int agentsAmount{ 1000 };
 		int strategicAgentsAmount{ 50 };
 		int kMin{ 50 };
-		int kMax{ 150 };
+		int kMax{ 450 };
 		double expoA{ 0.5 };
 		double expoG{ 0.5 };
 		bool Done{ false };
@@ -178,6 +178,7 @@ namespace Rae
 		int CurrentCycleNumber() { return mCurrentCycle.Round; }
 		bool IsWorking(){ return mIsRunning || mIsInitalizing; }
 		void GenerateReport();
+		void SetRandomProperties();
 		std::vector<float> GetTrustLevels();
 	};
 

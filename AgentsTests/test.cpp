@@ -76,6 +76,7 @@ void TestKMeansSeperated(KMeans kMeans) {
 }
 
 static std::string GetPathToFile(std::string filename) {
+	
 	std::string executionRootPath = std::filesystem::current_path().string();
 	std::string filePath = executionRootPath + "\\..\\..\\" + filename;
 	return filePath;

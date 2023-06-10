@@ -649,5 +649,12 @@ namespace Rae {
 		mGeneratingReportDone = true;
 		logger->AddLog("Generating report data is done");
 	}
+
+	void MonteCarlo::SetRandomProperties()
+	{
+		goodWill.x = RealRandomizer(0, 1).GetEvenRandomNumber();
+		goodWill.y = RealRandomizer(0, 1).GetEvenRandomNumber();
+		goodWill.z = RealRandomizer(0, 1).GetEvenRandomNumber();
+	}
 }
 
