@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "Randomizer.h"
 #include "KMeans.h"
+#include "Twitch.h"
 
 
 namespace Rae {
@@ -444,8 +445,15 @@ namespace Rae {
 
 		double serviceA = 0;
 		double availiability = 0;
-		serviceA = agentServiceRandomizer.GetEvenRandomNumber();
-		availiability = std::pow(serviceA, 1/expoA);
+
+		if (IsValidation) {
+			availiability = Twitch::GetAvialibility();
+		}
+		else {
+			serviceA = agentServiceRandomizer.GetEvenRandomNumber();
+			availiability = std::pow(serviceA, 1 / expoA);
+		}
+		
 		mCurrentSupplier.serviceAvailiability = availiability;
 
 		std::string message = "setting service availiability for agent supplier: ";
@@ -462,9 +470,16 @@ namespace Rae {
 
 		double reception = 0;
 		double serviceA = 0;
+
+		if (IsValidation) {
+			reception = Twitch::GetReception();
+		}
+		else {
+			serviceA = agentServiceRandomizer.GetEvenRandomNumber();
+			reception = std::pow(serviceA, 1 / expoG);
+		}
 		
-		serviceA = agentServiceRandomizer.GetEvenRandomNumber();
-		reception = std::pow(serviceA, 1/expoG);
+		
 		mCurrentRecipient.serviceReception = reception;
 
 		std::string message = "setting service recipient for agent supplier: ";

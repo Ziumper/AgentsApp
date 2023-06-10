@@ -158,6 +158,7 @@ namespace Rae
 		bool Done{ false };
 		double beginTrustMesaure{ 1 };
 		bool boostMode{ true };
+		bool IsValidation{ false };
 
 		/// <summary>
 		/// Reporing
