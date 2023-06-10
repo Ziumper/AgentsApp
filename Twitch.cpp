@@ -1,4 +1,5 @@
 #include "Twitch.h"
+#include "Randomizer.h"
 
 
 
@@ -50,6 +51,58 @@ std::vector<TwitchStream> Twitch::ReadTwitchStreams(std::string& path)
         result.push_back(TwitchStream(row));
     }
     return result;
+}
+
+double Twitch::GetAvialibility()
+{
+    RealRandomizer randomizer = RealRandomizer(0,1);
+    
+    double value = randomizer.GetEvenRandomNumber();
+    if (value <= 0.17) //17% range 0 - 0.1
+        return RealRandomizer(0, 0.1).GetEvenRandomNumber();
+    else if (value <= 0.38) // 21+17 = 38
+        return RealRandomizer(0.1, 0.2).GetEvenRandomNumber();
+    else if (value <= 0.55) // 38% + 17%
+        return RealRandomizer(0.2, 0.3).GetEvenRandomNumber();
+    else if (value <= 0.66)
+        return RealRandomizer(0.3, 0.4).GetEvenRandomNumber();
+    else if (value <= 0.73)
+        return RealRandomizer(0.4, 0.5).GetEvenRandomNumber();
+    else if (value <= 0.78)
+        return RealRandomizer(0.5, 0.6).GetEvenRandomNumber();
+    else if (value <= 0.83)
+        return RealRandomizer(0.6, 0.7).GetEvenRandomNumber();
+    else if (value <= 0.87)
+        return RealRandomizer(0.7, 0.8).GetEvenRandomNumber();
+    else if (value <= 0.90)
+        return RealRandomizer(0.8, 0.9).GetEvenRandomNumber();
+    return RealRandomizer(0.9, 1).GetEvenRandomNumber();
+}
+
+double Twitch::GetReception()
+{
+    RealRandomizer randomizer = RealRandomizer(0, 1);
+    double value = randomizer.GetEvenRandomNumber();
+
+    if (value <= 0.64)
+        return RealRandomizer(0, 0.1).GetEvenRandomNumber();
+    else if (value <= 0.80)
+        return RealRandomizer(0.1, 0.2).GetEvenRandomNumber();
+    else if (value <= 0.86)
+        return RealRandomizer(0.2, 0.3).GetEvenRandomNumber();
+    else if (value <= 0.90)
+        return RealRandomizer(0.3, 0.4).GetEvenRandomNumber();
+    else if (value <= 0.92)
+        return RealRandomizer(0.4, 0.5).GetEvenRandomNumber();
+    else if (value <= 0.93)
+        return RealRandomizer(0.5, 0.6).GetEvenRandomNumber();
+    else if (value <= 0.94)
+        return RealRandomizer(0.6, 0.7).GetEvenRandomNumber();
+    else if (value <= 0.95)
+        return RealRandomizer(0.7, 0.8).GetEvenRandomNumber();
+    else if (value <= 0.96)
+        return RealRandomizer(0.8, 0.9).GetEvenRandomNumber();
+    return RealRandomizer(0.9, 1).GetEvenRandomNumber();
 }
 
 TwitchUser::TwitchUser(std::vector<std::string>& data)

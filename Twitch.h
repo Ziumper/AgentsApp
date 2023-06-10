@@ -39,5 +39,7 @@ public:
 		std::string& path);
 	std::vector<TwitchUser> ReadTwitchUserData(std::string& path);
 	std::vector<TwitchStream> ReadTwitchStreams(std::string& path);
+	double GetAvialibility();
+	double GetReception();
 };
 
